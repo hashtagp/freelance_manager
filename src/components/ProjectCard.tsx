@@ -9,9 +9,10 @@ import Avatar from './ui/Avatar';
 interface ProjectCardProps {
     project: Project;
     onClick?: () => void;
+    className?: string;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, className }) => {
     const getStatusVariant = (status: string) => {
         switch (status.toLowerCase()) {
             case 'completed': return 'success';
@@ -35,7 +36,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     };
 
     return (
-        <div className="cursor-pointer" onClick={onClick}>
+        <div className={`cursor-pointer ${className || ''}`} onClick={onClick}>
             <Card hover gradient className="group">
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">

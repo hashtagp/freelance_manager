@@ -46,98 +46,152 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-purple-500 to-pink-500 
+                      flex items-center justify-center mb-4 shadow-lg">
+          <span className="text-2xl">✨</span>
+        </div>
+        <h2 className="text-3xl font-bold text-white">
           Create Account
         </h2>
-        <p className="text-gray-400 mt-2">Join us and manage your projects</p>
+        <p className="text-white/70">Join us and start managing your projects like a pro</p>
       </div>
 
+      {/* Error Alert */}
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-          {error}
+        <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-300 text-sm backdrop-blur-sm animate-fade-in">
+          <div className="flex items-center space-x-2">
+            <span className="text-red-400">⚠️</span>
+            <span>{error}</span>
+          </div>
         </div>
       )}
 
-      <div className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+      {/* Form Fields */}
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <label htmlFor="name" className="block text-sm font-medium text-white/90">
             Full Name
           </label>
-          <Input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-            placeholder="Enter your full name"
-            required
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span className="text-white/50">👤</span>
+            </div>
+            <Input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+              placeholder="Enter your full name"
+              className="pl-10 bg-white/10 border-white/20 text-white placeholder-white/50 
+                       focus:border-purple-400 focus:ring-purple-400/50"
+              required
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+        <div className="space-y-2">
+          <label htmlFor="email" className="block text-sm font-medium text-white/90">
             Email Address
           </label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span className="text-white/50">📧</span>
+            </div>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="pl-10 bg-white/10 border-white/20 text-white placeholder-white/50 
+                       focus:border-purple-400 focus:ring-purple-400/50"
+              required
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+        <div className="space-y-2">
+          <label htmlFor="password" className="block text-sm font-medium text-white/90">
             Password
           </label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            placeholder="Create a password"
-            required
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span className="text-white/50">🔒</span>
+            </div>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              placeholder="Create a strong password"
+              className="pl-10 bg-white/10 border-white/20 text-white placeholder-white/50 
+                       focus:border-purple-400 focus:ring-purple-400/50"
+              required
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+        <div className="space-y-2">
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-white/90">
             Confirm Password
           </label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm your password"
-            required
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span className="text-white/50">🔐</span>
+            </div>
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm your password"
+              className="pl-10 bg-white/10 border-white/20 text-white placeholder-white/50 
+                       focus:border-purple-400 focus:ring-purple-400/50"
+              required
+              disabled={isLoading}
+            />
+          </div>
         </div>
       </div>
 
+      {/* Submit Button */}
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full"
+        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 
+                 hover:to-pink-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg 
+                 transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 
+                 disabled:cursor-not-allowed disabled:transform-none"
       >
-        {isLoading ? <LoadingSpinner size="sm" /> : 'Create Account'}
+        {isLoading ? (
+          <div className="flex items-center justify-center space-x-2">
+            <LoadingSpinner size="sm" />
+            <span>Creating account...</span>
+          </div>
+        ) : (
+          <span className="flex items-center justify-center space-x-2">
+            <span>Create Account</span>
+            <span>✨</span>
+          </span>
+        )}
       </Button>
 
-      <div className="text-center">
-        <p className="text-gray-400">
+      {/* Switch to Sign In */}
+      <div className="text-center pt-4 border-t border-white/10">
+        <p className="text-white/70">
           Already have an account?{' '}
           <button
             type="button"
             onClick={onSwitchToSignIn}
-            className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
+            className="text-purple-300 hover:text-purple-200 font-semibold transition-colors 
+                     underline underline-offset-2 decoration-purple-300/50 hover:decoration-purple-200"
           >
-            Sign in
+            Sign in instead
           </button>
         </p>
       </div>

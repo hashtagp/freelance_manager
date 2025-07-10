@@ -82,7 +82,7 @@ const Navigation = () => {
                             <button className="nav-item">
                                 <span className="nav-item-icon">🔔</span>
                             </button>
-                            <div className="relative">
+                            <div className="relative" ref={userMenuRef}>
                                 <button
                                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-colors"
