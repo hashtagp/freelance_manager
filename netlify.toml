@@ -1,0 +1,34 @@
+[build]
+  command = "npm install --legacy-peer-deps && npm run build"
+  publish = ".next"
+  functions = "netlify/functions"
+
+[plugins]
+  package = "@netlify/plugin-nextjs"
+
+# Environment settings
+[context.production.environment]
+  NODE_VERSION = "18"
+
+[context.deploy-preview]
+  command = "npm install --legacy-peer-deps && npm run build"
+
+[context.branch-deploy]
+  command = "npm install --legacy-peer-deps && npm run build"
+
+# Redirects section
+[[redirects]]
+  from = "/old-route"
+  to = "/new-route"
+  status = 301
+
+[[redirects]]
+  from = "/blog/*"
+  to = "/blog/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/external"
+  to = "https://example.com"
+  status = 301
+  force = true
