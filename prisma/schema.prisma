@@ -1,0 +1,169 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  projects       Project[]
+  teamMemberships ProjectTeamMember[]
+  paymentsReceived Payment[] @relation("PaymentToUser")
+  paymentsMade     Payment[] @relation("PaymentFromUser")
+
+  @@map("users")
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  company     String?
+  address     String?
+  avatar      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  projects Project[]
+
+  @@map("clients")
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  status      ProjectStatus @default(PLANNING)
+  budget      Float?
+  startDate   DateTime?
+  deadline    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Foreign Keys
+  userId   String
+  clientId String?
+
+  // Relations
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client       Client?             @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  teamMembers  ProjectTeamMember[]
+  payments     Payment[]
+  deadlines    Deadline[]
+
+  @@map("projects")
+}
+
+model ProjectTeamMember {
+  id        String   @id @default(cuid())
+  role      String
+  hourlyRate Float?
+  totalAllocation Float? // Total amount allocated for this project
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign Keys
+  projectId String
+  userId    String
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_team_members")
+}
+
+model Payment {
+  id          String      @id @default(cuid())
+  amount      Float
+  description String?
+  type        PaymentType
+  status      PaymentStatus @default(PENDING)
+  dueDate     DateTime?
+  paidDate    DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Foreign Keys
+  projectId String
+  fromUserId String? // Who made the payment (client payments have null)
+  toUserId   String? // Who received the payment (client payments to project owner)
+
+  // Relations
+  project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fromUser User?   @relation("PaymentFromUser", fields: [fromUserId], references: [id], onDelete: SetNull)
+  toUser   User?   @relation("PaymentToUser", fields: [toUserId], references: [id], onDelete: SetNull)
+
+  @@map("payments")
+}
+
+model Deadline {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  status      DeadlineStatus @default(PENDING)
+  priority    Priority       @default(MEDIUM)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Foreign Keys
+  projectId String
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("deadlines")
+}
+
+// Enums
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentType {
+  CLIENT_TO_PROJECT  // Payment from client to project
+  PROJECT_TO_MEMBER  // Payment from project to team member
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum DeadlineStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
