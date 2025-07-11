@@ -54,7 +54,7 @@ const Navigation = () => {
                     <div className="nav-logo-icon">
                         <span>F</span>
                     </div>
-                    <span className="nav-logo-text">FreelanceManager</span>
+                    <span className="nav-logo-text">Paymento</span>
                 </Link>
 
                 {/* Desktop Navigation - only show if authenticated */}
