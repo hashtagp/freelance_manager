@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/db';
 
 export async function GET(
   request: Request,
@@ -7,16 +8,30 @@ export async function GET(
   try {
     const { id } = await params;
     
-    // Mock team data - in a real app, you'd fetch from database
-    const team = {
-      id,
-      name: `Team ${id}`,
-      description: 'Team management features are currently under development',
-      members: [],
-      projects: [],
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    const team = await prisma.team.findUnique({
+      where: { id },
+      include: {
+        members: {
+          include: {
+            user: true,
+          },
+        },
+        projects: {
+          include: {
+            project: {
+              include: {
+                user: true,
+                client: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!team) {
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+    }
 
     return NextResponse.json(team);
   } catch (error) {

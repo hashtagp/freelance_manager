@@ -1,6 +1,7 @@
 import React from 'react';
 import './globals.css';
 import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -33,11 +34,7 @@ export default function RootLayout({
                 </ProtectedRoute>
               </div>
             </main>
-            <footer className="bg-white/80 backdrop-blur-lg border-t border-gray-200 py-6">
-              <div className="container mx-auto px-4 text-center">
-                <p className="text-gray-600">&copy; {new Date().getFullYear()} Freelance Project Manager - Built with ❤️</p>
-              </div>
-            </footer>
+            <Footer />
           </div>
           <AuthModal />
         </AuthProvider>

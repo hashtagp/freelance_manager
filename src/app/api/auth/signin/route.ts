@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/db';
+import { verifyPassword, generateToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,19 +14,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Demo authentication - replace with actual auth logic
-    // For demo purposes, accept any email/password combination
-    const user = {
-      id: '1',
-      email,
-      name: email.split('@')[0], // Use email username as name
-    };
+    // Find user in database
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
 
-    const token = 'demo-jwt-token-' + Date.now(); // In real app, generate proper JWT
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
+
+    // Verify password
+    const isPasswordValid = await verifyPassword(password, user.password);
+    if (!isPasswordValid) {
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
+
+    // Generate JWT token
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      name: user.name
+    });
+
+    // Return user data (without password)
+    const { password: _, ...userWithoutPassword } = user;
 
     return NextResponse.json({
       success: true,
-      user,
+      user: userWithoutPassword,
       token,
     });
   } catch (error) {

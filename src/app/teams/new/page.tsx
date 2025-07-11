@@ -3,12 +3,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { TeamForm, TeamFormData } from '../../../components/forms/TeamForm';
+import { TeamForm } from '../../../components/forms/TeamForm';
+import { TeamFormData } from '@/types';
+import { useTeams } from '@/hooks/useTeams';
 
 const NewTeamPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const { createTeam } = useTeams();
   const router = useRouter();
 
   const handleSubmit = async (data: TeamFormData) => {
@@ -16,23 +19,17 @@ const NewTeamPage = () => {
     setError(null);
     
     try {
-      const response = await fetch('/api/teams', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+      const newTeam = await createTeam({
+        name: data.name,
+        description: data.description,
+        skills: data.skills,
+        status: data.status,
       });
-
-      if (response.ok) {
-        setSuccess(true);
-        setTimeout(() => {
-          router.push('/teams');
-        }, 1500);
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create team');
-      }
+      
+      setSuccess(true);
+      setTimeout(() => {
+        router.push(`/teams/${newTeam.id}`);
+      }, 1500);
     } catch (error) {
       console.error('Error creating team:', error);
       setError(error instanceof Error ? error.message : 'An unexpected error occurred');

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SignInForm } from './SignInForm';
 import { SignUpForm } from './SignUpForm';
+import '@/styles/auth-modal.css';
 
 export function AuthModal() {
   const { showAuthModal, setShowAuthModal, isAuthenticated } = useAuth();
@@ -39,34 +40,33 @@ export function AuthModal() {
   if (!showAuthModal) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="auth-modal-overlay">
       {/* Enhanced Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-md animate-fade-in"
+        className="auth-modal-backdrop"
         onClick={() => setShowAuthModal(false)}
       />
       
       {/* Modal Container */}
-      <div className="relative w-full max-w-md animate-scale-in">
+      <div className="auth-modal-container">
         {/* Background Glow */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur opacity-20" />
+        <div className="auth-modal-glow" />
         
         {/* Modal Content */}
-        <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="auth-modal-content">
           {/* Header Gradient */}
-          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-purple-500/20 to-transparent" />
+          <div className="auth-modal-header-gradient" />
           
           {/* Close Button */}
           <button
             onClick={() => setShowAuthModal(false)}
-            className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 
-                     flex items-center justify-center transition-all duration-200 group border border-white/20"
+            className="auth-modal-close"
           >
-            <span className="text-white/70 group-hover:text-white text-xl font-light">×</span>
+            <span className="auth-modal-close-icon">×</span>
           </button>
 
           {/* Content */}
-          <div className="relative p-8 pt-12">
+          <div className="auth-modal-body">
             {/* Auth forms */}
             {authMode === 'signin' ? (
               <SignInForm onSwitchToSignUp={() => setAuthMode('signup')} />
@@ -76,7 +76,7 @@ export function AuthModal() {
           </div>
           
           {/* Footer Decoration */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500" />
+          <div className="auth-modal-footer-decoration" />
         </div>
       </div>
     </div>

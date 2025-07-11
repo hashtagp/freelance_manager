@@ -2,56 +2,48 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 import { useAuth } from '@/contexts/AuthContext';
+import '@/styles/home.css';
 
 export default function HomePage() {
   const { isAuthenticated, setShowAuthModal } = useAuth();
 
   return (
-    <div className="min-h-screen">
+    <div className="home-container">
       {/* Hero Section */}
-      <section className="text-center py-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-6xl font-bold mb-6 gradient-text animate-fadeIn">
-            Freelance Project Manager
+      <section className="hero-section">
+        <div className="hero-content">
+          <h1 className="hero-title animate-fade-in">
+            Payteams
           </h1>
-          <p className="text-xl text-gray-600 mb-8 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-            Streamline your freelance business with our modern, intuitive project management solution. 
+          <p className="hero-subtitle animate-fade-in-delay-1">
+            Streamline your business with our modern, intuitive project management solution. 
             Track projects, manage teams, and grow your business with ease.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fadeIn" style={{ animationDelay: '0.4s' }}>
+          <div className="hero-buttons animate-fade-in-delay-2">
             {isAuthenticated ? (
               <>
-                <Link href="/dashboard">
-                  <Button size="lg" className="w-full sm:w-auto">
-                    Go to Dashboard 🚀
-                  </Button>
+                <Link href="/dashboard" className="btn-primary">
+                  Go to Dashboard →
                 </Link>
-                <Link href="/projects">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                    View Projects
-                  </Button>
+                <Link href="/projects" className="btn-secondary">
+                  View Projects
                 </Link>
               </>
             ) : (
               <>
-                <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto"
+                <button 
+                  className="btn-primary"
                   onClick={() => setShowAuthModal(true)}
                 >
-                  Get Started 🚀
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="w-full sm:w-auto"
+                  Get Started →
+                </button>
+                <button 
+                  className="btn-secondary"
                   onClick={() => setShowAuthModal(true)}
                 >
                   Sign In
-                </Button>
+                </button>
               </>
             )}
           </div>
@@ -59,48 +51,67 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12 gradient-text">
+      <section className="features-section">
+        <div className="features-container">
+          <h2 className="features-title">
             Why Choose Our Platform?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card hover gradient className="text-center animate-fadeIn">
-              <div className="text-6xl mb-4">📊</div>
-              <h3 className="text-xl font-semibold mb-3">Smart Dashboard</h3>
-              <p className="text-gray-600">
-                Get a comprehensive overview of all your projects, deadlines, and team performance in one place.
+          <div className="features-grid">
+            <div className="feature-card">
+              <span className="feature-icon">�</span>
+              <h3 className="feature-title">Project Management</h3>
+              <p className="feature-description">
+                Create, track, and manage projects with status updates, budgets, and deadlines.
               </p>
-            </Card>
-            <Card hover gradient className="text-center animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-              <div className="text-6xl mb-4">👥</div>
-              <h3 className="text-xl font-semibold mb-3">Team Collaboration</h3>
-              <p className="text-gray-600">
-                Seamlessly collaborate with your team members, track their progress, and manage roles efficiently.
+            </div>
+            <div className="feature-card">
+              <span className="feature-icon">👥</span>
+              <h3 className="feature-title">Team Management</h3>
+              <p className="feature-description">
+                Organize and manage your teams with dedicated team pages and member coordination.
               </p>
-            </Card>
-            <Card hover gradient className="text-center animate-fadeIn" style={{ animationDelay: '0.4s' }}>
-              <div className="text-6xl mb-4">📈</div>
-              <h3 className="text-xl font-semibold mb-3">Growth Analytics</h3>
-              <p className="text-gray-600">
-                Monitor your business growth with detailed analytics and insights to make data-driven decisions.
+            </div>
+            <div className="feature-card">
+              <span className="feature-icon">�</span>
+              <h3 className="feature-title">Dashboard Analytics</h3>
+              <p className="feature-description">
+                Get insights with visual progress charts and project statistics on your dashboard.
               </p>
-            </Card>
+            </div>
+            <div className="feature-card">
+              <span className="feature-icon">🔐</span>
+              <h3 className="feature-title">User Authentication</h3>
+              <p className="feature-description">
+                Secure login and registration system with protected routes and user sessions.
+              </p>
+            </div>
+            <div className="feature-card">
+              <span className="feature-icon">�️</span>
+              <h3 className="feature-title">Database Integration</h3>
+              <p className="feature-description">
+                Powered by PostgreSQL and Prisma for reliable data storage and management.
+              </p>
+            </div>
+            <div className="feature-card">
+              <span className="feature-icon">📱</span>
+              <h3 className="feature-title">Responsive Design</h3>
+              <p className="feature-description">
+                Modern, mobile-first design that works perfectly on all devices and screen sizes.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Freelance Business?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Join thousands of successful freelancers who trust our platform to manage their projects and grow their business.
+      <section className="cta-section">
+        <div className="cta-container">
+          <h2 className="cta-title">Ready to Transform Your Business?</h2>
+          <p className="cta-subtitle">
+            Join us to efficieantly manage your projects and grow your business.
           </p>
-          <Link href="/dashboard">
-            <Button variant="secondary" size="lg" className="bg-white text-purple-600 hover:bg-gray-100">
-              Start Your Journey Today
-            </Button>
+          <Link href="/dashboard" className="btn-cta">
+            Start Your Journey Today
           </Link>
         </div>
       </section>

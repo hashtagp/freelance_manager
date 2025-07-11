@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { TeamFormData } from '@/types';
 
 interface TeamFormProps {
   onSubmit: (data: TeamFormData) => Promise<void>;
@@ -9,14 +10,11 @@ interface TeamFormProps {
   isLoading?: boolean;
 }
 
-export interface TeamFormData {
-  name: string;
-  description: string;
-}
-
 interface TeamFormErrors {
   name?: string;
   description?: string;
+  skills?: string;
+  status?: string;
 }
 
 export const TeamForm: React.FC<TeamFormProps> = ({
@@ -27,7 +25,9 @@ export const TeamForm: React.FC<TeamFormProps> = ({
 }) => {
   const [formData, setFormData] = useState<TeamFormData>({
     name: initialData?.name || '',
-    description: initialData?.description || ''
+    description: initialData?.description || '',
+    skills: initialData?.skills || [],
+    status: initialData?.status || 'active'
   });
 
   const [errors, setErrors] = useState<TeamFormErrors>({});
@@ -62,10 +62,22 @@ export const TeamForm: React.FC<TeamFormProps> = ({
   };
 
   const handleChange = (field: keyof TeamFormData, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    if (field === 'skills') {
+      setFormData(prev => ({
+        ...prev,
+        skills: value.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0)
+      }));
+    } else if (field === 'status') {
+      setFormData(prev => ({
+        ...prev,
+        status: value as 'active' | 'inactive'
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
     
     // Clear error when user starts typing
     if (errors[field]) {
@@ -145,6 +157,70 @@ export const TeamForm: React.FC<TeamFormProps> = ({
             {errors.description}
           </div>
         )}
+      </div>
+
+      {/* Team Skills Field */}
+      <div className="form-group">
+        <label className="form-label">
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>🎯</span>
+            Skills
+          </span>
+        </label>
+        <input
+          type="text"
+          value={formData.skills.join(', ')}
+          onChange={(e) => handleChange('skills', e.target.value)}
+          className="form-input"
+          placeholder="e.g., React, Node.js, Design, Marketing (comma-separated)"
+          style={{ 
+            background: errors.skills ? 'rgba(239, 68, 68, 0.05)' : 'white',
+            borderColor: errors.skills ? '#ef4444' : '#e5e7eb'
+          }}
+        />
+        <div style={{ 
+          fontSize: '0.85rem', 
+          color: '#6b7280', 
+          marginTop: '6px',
+          fontStyle: 'italic'
+        }}>
+          Separate multiple skills with commas
+        </div>
+        {errors.skills && (
+          <div style={{ 
+            color: '#ef4444', 
+            fontSize: '0.85rem', 
+            marginTop: '6px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <span>⚠️</span>
+            {errors.skills}
+          </div>
+        )}
+      </div>
+
+      {/* Team Status Field */}
+      <div className="form-group">
+        <label className="form-label">
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>📊</span>
+            Status
+          </span>
+        </label>
+        <select
+          value={formData.status}
+          onChange={(e) => handleChange('status', e.target.value)}
+          className="form-input"
+          style={{ 
+            background: 'white',
+            borderColor: '#e5e7eb'
+          }}
+        >
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
       </div>
 
       {/* Additional Team Settings */}

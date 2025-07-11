@@ -1,0 +1,131 @@
+/* Legal Pages Styles */
+.legal-container {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.legal-content {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.legal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 48px 40px;
+  text-align: center;
+}
+
+.legal-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+}
+
+.legal-subtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 400;
+}
+
+.legal-section {
+  padding: 32px 40px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.legal-section:last-child {
+  border-bottom: none;
+}
+
+.legal-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
+}
+
+.legal-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 24px 0 12px 0;
+  letter-spacing: -0.01em;
+}
+
+.legal-section p {
+  color: #475569;
+  line-height: 1.7;
+  margin: 0 0 16px 0;
+  font-size: 0.95rem;
+}
+
+.legal-section ul {
+  color: #475569;
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.legal-section li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.legal-section li strong {
+  color: #334155;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .legal-container {
+    padding: 20px 15px;
+  }
+
+  .legal-header {
+    padding: 32px 24px;
+  }
+
+  .legal-title {
+    font-size: 2rem;
+  }
+
+  .legal-section {
+    padding: 24px;
+  }
+
+  .legal-section h2 {
+    font-size: 1.375rem;
+  }
+
+  .legal-section h3 {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .legal-header {
+    padding: 24px 20px;
+  }
+
+  .legal-title {
+    font-size: 1.75rem;
+  }
+
+  .legal-section {
+    padding: 20px;
+  }
+
+  .legal-section ul {
+    padding-left: 20px;
+  }
+}

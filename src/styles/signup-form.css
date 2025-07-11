@@ -1,0 +1,206 @@
+/* SignUp Form Specific Styles */
+.signup-form {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.signup-form .auth-form-header {
+  margin-bottom: 2rem;
+}
+
+.signup-form .auth-form-title {
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.signup-form .auth-form-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.signup-form .auth-form-fields {
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.signup-form .auth-form-submit {
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.signup-form .auth-form-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.signup-form .auth-form-submit:hover::before {
+  left: 100%;
+}
+
+.signup-form .auth-form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.signup-form .auth-form-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.signup-form .auth-form-switch-btn {
+  background: none;
+  border: none;
+  color: #10b981;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.signup-form .auth-form-switch-btn:hover {
+  color: #34d399;
+}
+
+.signup-form .auth-form-switch-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.signup-form .auth-form-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #fca5a5;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  animation: fadeInError 0.3s ease-out;
+}
+
+/* Password strength indicator */
+.signup-form .password-strength {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.signup-form .strength-bar {
+  height: 3px;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.signup-form .strength-bar.weak {
+  background: #ef4444;
+}
+
+.signup-form .strength-bar.medium {
+  background: #f59e0b;
+}
+
+.signup-form .strength-bar.strong {
+  background: #10b981;
+}
+
+/* Form validation states */
+.signup-form .field-valid {
+  position: relative;
+}
+
+.signup-form .field-valid::after {
+  content: '✓';
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #10b981;
+  font-weight: bold;
+}
+
+.signup-form .field-error {
+  position: relative;
+}
+
+.signup-form .field-error::after {
+  content: '✗';
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ef4444;
+  font-weight: bold;
+}
+
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Success message animation */
+@keyframes slideInSuccess {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.signup-form .success-message {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #6ee7b7;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  animation: slideInSuccess 0.3s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .signup-form {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  
+  .signup-form .auth-form-title {
+    font-size: 1.75rem;
+  }
+  
+  .signup-form .auth-form-fields {
+    gap: 0.875rem;
+  }
+}

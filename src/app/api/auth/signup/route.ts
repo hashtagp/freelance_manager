@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/db';
+import { hashPassword, generateToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,19 +21,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Demo registration - replace with actual auth logic
-    // For demo purposes, accept any registration
-    const user = {
-      id: Date.now().toString(),
-      name,
-      email,
-    };
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    });
 
-    const token = 'demo-jwt-token-' + Date.now(); // In real app, generate proper JWT
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'User with this email already exists' },
+        { status: 409 }
+      );
+    }
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    // Create user in database
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      }
+    });
+
+    // Generate JWT token
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      name: user.name
+    });
+
+    // Return user data (without password)
+    const { password: _, ...userWithoutPassword } = user;
 
     return NextResponse.json({
       success: true,
-      user,
+      user: userWithoutPassword,
       token,
     });
   } catch (error) {

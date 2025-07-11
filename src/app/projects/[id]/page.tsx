@@ -5,6 +5,9 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Project } from '../../../types';
 import { fetchProject } from '../../../lib/api';
+import ProjectTeamPricing from '../../../components/ProjectTeamPricing';
+import ProjectPayouts from '../../../components/ProjectPayouts';
+import ProjectPayins from '../../../components/ProjectPayins';
 
 const ProjectPage = () => {
   const params = useParams();
@@ -62,10 +65,10 @@ const ProjectPage = () => {
           <span>←</span>
           Back to Projects
         </Link>
-        <button className="btn btn-primary">
+        <Link href={`/projects/${project.id}/edit`} className="btn btn-primary">
           <span>✏️</span>
           Edit Project
-        </button>
+        </Link>
       </div>
 
       <div className="stats-grid">
@@ -92,6 +95,21 @@ const ProjectPage = () => {
       </div>
 
       <div className="card-grid">
+        {/* Team Pricing Overview */}
+        <div style={{ gridColumn: '1 / -1', marginBottom: '2rem' }}>
+          <ProjectTeamPricing projectId={project.id} />
+        </div>
+
+        {/* Client Payments */}
+        <div style={{ gridColumn: '1 / -1', marginBottom: '2rem' }}>
+          <ProjectPayins projectId={project.id} projectBudget={project.budget} />
+        </div>
+
+        {/* Project Payouts */}
+        <div style={{ gridColumn: '1 / -1', marginBottom: '2rem' }}>
+          <ProjectPayouts projectId={project.id} />
+        </div>
+
         {project.client && (
           <div className="card-modern">
             <h3 className="card-title">Client Information</h3>

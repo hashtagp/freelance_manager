@@ -68,7 +68,7 @@ const Dashboard: React.FC = () => {
             {/* Welcome Section */}
             <div className="page-header">
                 <h1 className="page-title">Welcome to Your Dashboard</h1>
-                <p className="page-subtitle">Here's an overview of your freelance business</p>
+                <p className="page-subtitle">Here's an overview of your business</p>
             </div>
 
             {/* Stats Grid */}
@@ -118,31 +118,184 @@ const Dashboard: React.FC = () => {
 
             {/* Recent Projects Section */}
             <div className="card-modern">
-                <div className="card-header">
-                    <h2 className="card-title">Recent Projects</h2>
-                    <Link href="/projects" className="btn btn-outline">
+                <div className="card-header" style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    marginBottom: '1.5rem',
+                    paddingBottom: '1rem',
+                    borderBottom: '1px solid #e5e7eb'
+                }}>
+                    <div>
+                        <h2 className="card-title" style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600' }}>Recent Projects</h2>
+                        <p style={{ margin: '0.25rem 0 0 0', color: '#6b7280', fontSize: '0.875rem' }}>
+                            Your latest projects and their current status
+                        </p>
+                    </div>
+                    <Link href="/projects" className="btn btn-outline" style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.5rem 1rem',
+                        fontSize: '0.875rem',
+                        fontWeight: '500'
+                    }}>
                         <span>📋</span>
                         View All
                     </Link>
                 </div>
 
                 {projects.length > 0 ? (
-                    <div className="card-grid">
-                        {projects.slice(0, 3).map(project => (
-                            <ProjectCard 
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {projects.slice(0, 4).map(project => (
+                            <Link 
                                 key={project.id} 
-                                project={project}
-                            />
+                                href={`/projects/${project.id}`}
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <div style={{
+                                    padding: '1.25rem',
+                                    border: '1px solid #e5e7eb',
+                                    borderRadius: '12px',
+                                    backgroundColor: '#ffffff',
+                                    transition: 'all 0.2s ease',
+                                    cursor: 'pointer'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = '#3b82f6';
+                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.15)';
+                                    e.currentTarget.style.transform = 'translateY(-1px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                                >
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                                        <div style={{ flex: 1 }}>
+                                            <h3 style={{
+                                                margin: 0,
+                                                fontSize: '1.125rem',
+                                                fontWeight: '600',
+                                                color: '#374151',
+                                                marginBottom: '0.25rem'
+                                            }}>
+                                                {project.title}
+                                            </h3>
+                                            <p style={{
+                                                margin: 0,
+                                                fontSize: '0.875rem',
+                                                color: '#6b7280',
+                                                lineHeight: '1.4'
+                                            }}>
+                                                {project.description && project.description.length > 100 
+                                                    ? `${project.description.substring(0, 100)}...` 
+                                                    : project.description || 'No description'}
+                                            </p>
+                                        </div>
+                                        <div style={{
+                                            padding: '0.25rem 0.75rem',
+                                            borderRadius: '20px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '500',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.05em',
+                                            backgroundColor: 
+                                                project.status.toLowerCase() === 'completed' ? '#ecfdf5' :
+                                                project.status.toLowerCase() === 'in_progress' ? '#eff6ff' :
+                                                project.status.toLowerCase() === 'planning' ? '#fef3c7' : '#f3f4f6',
+                                            color:
+                                                project.status.toLowerCase() === 'completed' ? '#059669' :
+                                                project.status.toLowerCase() === 'in_progress' ? '#2563eb' :
+                                                project.status.toLowerCase() === 'planning' ? '#d97706' : '#6b7280',
+                                            border: `1px solid ${
+                                                project.status.toLowerCase() === 'completed' ? '#bbf7d0' :
+                                                project.status.toLowerCase() === 'in_progress' ? '#bfdbfe' :
+                                                project.status.toLowerCase() === 'planning' ? '#fde68a' : '#d1d5db'
+                                            }`,
+                                            marginLeft: '1rem'
+                                        }}>
+                                            {project.status.replace('_', ' ')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                <span>💰</span>
+                                                <span>${project.budget?.toLocaleString() || 'Not set'}</span>
+                                            </div>
+                                            {project.deadline && (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                    <span>📅</span>
+                                                    <span>Due: {new Date(project.deadline).toLocaleDateString()}</span>
+                                                </div>
+                                            )}
+                                            {project.client && (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                    <span>👤</span>
+                                                    <span>{project.client.name}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div style={{
+                                            fontSize: '0.75rem',
+                                            color: '#9ca3af',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.25rem'
+                                        }}>
+                                            <span>→</span>
+                                            <span>View Details</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
                         ))}
                     </div>
                 ) : (
-                    <div className="empty-state" style={{ margin: '32px 0' }}>
-                        <div className="empty-state-icon">📋</div>
-                        <h3 className="empty-state-title">No Projects Yet</h3>
-                        <p className="empty-state-description">
+                    <div className="empty-state" style={{ margin: '2rem 0', textAlign: 'center' }}>
+                        <div style={{
+                            width: '64px',
+                            height: '64px',
+                            backgroundColor: '#f3f4f6',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 1rem',
+                            fontSize: '1.5rem'
+                        }}>
+                            📋
+                        </div>
+                        <h3 style={{
+                            margin: '0 0 0.5rem 0',
+                            fontSize: '1.125rem',
+                            fontWeight: '600',
+                            color: '#374151'
+                        }}>
+                            No Projects Yet
+                        </h3>
+                        <p style={{
+                            margin: '0 0 1.5rem 0',
+                            fontSize: '0.875rem',
+                            color: '#6b7280',
+                            maxWidth: '300px',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                            lineHeight: '1.5'
+                        }}>
                             Create your first project to get started with managing your freelance work
                         </p>
-                        <Link href="/projects/new" className="btn btn-primary">
+                        <Link href="/projects/new" className="btn btn-primary" style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.75rem 1.5rem',
+                            fontSize: '0.875rem',
+                            fontWeight: '500'
+                        }}>
                             <span>✨</span>
                             Create Project
                         </Link>

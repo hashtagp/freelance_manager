@@ -34,6 +34,7 @@ export interface Project {
   user: User
   client?: Client
   teamMembers: ProjectTeamMember[]
+  teams: ProjectTeam[]
   payments: Payment[]
   deadlines: Deadline[]
 }
@@ -202,8 +203,140 @@ export interface Team {
   id: string
   name: string
   description?: string
+  skills?: string[]
+  status: 'active' | 'inactive'
   createdAt: Date
   updatedAt: Date
-  members: User[]
-  projects: Project[]
+  members: TeamMember[]
+  projects: ProjectTeam[]
+}
+
+export interface TeamMember {
+  id: string
+  role: string
+  joinedAt: Date
+  createdAt: Date
+  updatedAt: Date
+  teamId: string
+  userId: string
+  team: Team
+  user: User
+}
+
+export interface ProjectTeam {
+  id: string
+  assignedAt: Date
+  createdAt: Date
+  updatedAt: Date
+  projectId: string
+  teamId: string
+  project: Project
+  team: Team
+  memberPricing?: ProjectTeamMemberPricing[]
+}
+
+export interface ProjectTeamMemberPricing {
+  id: string
+  fixedRate: number
+  currency: string
+  notes?: string
+  createdAt: Date
+  updatedAt: Date
+  projectId: string
+  teamId: string
+  userId: string
+  project: Project
+  team: Team
+  user: User
+}
+
+export interface TeamFormData {
+  name: string
+  description: string
+  skills: string[]
+  status: 'active' | 'inactive'
+}
+
+export interface MemberPricingFormData {
+  userId: string
+  fixedRate: number
+  currency?: string
+  notes?: string
+}
+
+export interface Payout {
+  id: string
+  title: string
+  description?: string
+  totalAmount: number
+  payoutDate: Date
+  status: PayoutStatus
+  createdAt: Date
+  updatedAt: Date
+  projectId: string
+  createdBy: string
+  project: Project
+  creator: User
+  members: PayoutMember[]
+}
+
+export interface PayoutMember {
+  id: string
+  amount: number
+  notes?: string
+  createdAt: Date
+  updatedAt: Date
+  payoutId: string
+  userId: string
+  payout: Payout
+  user: User
+}
+
+export interface PayoutFormData {
+  title: string
+  description?: string
+  payoutDate?: string
+  status?: PayoutStatus
+  members: PayoutMemberFormData[]
+}
+
+export interface PayoutMemberFormData {
+  userId: string
+  amount: number
+  notes?: string
+}
+
+export interface Payin {
+  id: string
+  title: string
+  description?: string
+  amount: number
+  payinDate: Date
+  status: PayinStatus
+  createdAt: Date
+  updatedAt: Date
+  projectId: string
+  createdBy: string
+  project: Project
+  creator: User
+}
+
+export interface PayinFormData {
+  title: string
+  description?: string
+  amount: number
+  payinDate: string
+  status: PayinStatus
+}
+
+export enum PayoutStatus {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED'
+}
+
+export enum PayinStatus {
+  PENDING = 'PENDING',
+  RECEIVED = 'RECEIVED',
+  CANCELLED = 'CANCELLED'
 }

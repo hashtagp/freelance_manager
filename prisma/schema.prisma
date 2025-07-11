@@ -22,8 +22,13 @@ model User {
   // Relations
   projects       Project[]
   teamMemberships ProjectTeamMember[]
+  teamMembershipsAsTeamMember TeamMember[]
   paymentsReceived Payment[] @relation("PaymentToUser")
   paymentsMade     Payment[] @relation("PaymentFromUser")
+  projectPricing   ProjectTeamMemberPricing[] @relation("UserProjectPricing")
+  createdPayouts   Payout[] @relation("PayoutCreator")
+  createdPayins    Payin[]  @relation("PayinCreator")
+  payoutMemberships PayoutMember[]
 
   @@map("users")
 }
@@ -64,8 +69,12 @@ model Project {
   user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   client       Client?             @relation(fields: [clientId], references: [id], onDelete: SetNull)
   teamMembers  ProjectTeamMember[]
+  teams        ProjectTeam[]
+  memberPricing ProjectTeamMemberPricing[]
   payments     Payment[]
   deadlines    Deadline[]
+  payouts      Payout[]
+  payins       Payin[]
 
   @@map("projects")
 }
@@ -133,6 +142,82 @@ model Deadline {
   @@map("deadlines")
 }
 
+model Team {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  members  TeamMember[]
+  projects ProjectTeam[]
+  memberPricing ProjectTeamMemberPricing[]
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  role      String   @default("Member")
+  joinedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign Keys
+  teamId String
+  userId String
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@map("team_members")
+}
+
+model ProjectTeam {
+  id        String   @id @default(cuid())
+  assignedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign Keys
+  projectId String
+  teamId    String
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  team    Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  memberPricing ProjectTeamMemberPricing[]
+
+  @@unique([projectId, teamId])
+  @@map("project_teams")
+}
+
+model ProjectTeamMemberPricing {
+  id        String   @id @default(cuid())
+  fixedRate Float    // Fixed rate for this member on this project
+  currency  String   @default("USD")
+  notes     String?  // Optional notes about the pricing
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign Keys
+  projectId String
+  teamId    String
+  userId    String
+
+  // Relations
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  team        Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user        User        @relation("UserProjectPricing", fields: [userId], references: [id], onDelete: Cascade)
+  projectTeam ProjectTeam @relation(fields: [projectId, teamId], references: [projectId, teamId], onDelete: Cascade)
+
+  @@unique([projectId, teamId, userId])
+  @@map("project_team_member_pricing")
+}
+
 // Enums
 enum ProjectStatus {
   PLANNING
@@ -166,4 +251,78 @@ enum Priority {
   MEDIUM
   HIGH
   URGENT
+}
+
+model Payout {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  totalAmount Float
+  payoutDate  DateTime     @default(now())
+  status      PayoutStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Foreign Keys
+  projectId String
+  createdBy String
+
+  // Relations
+  project Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creator User           @relation("PayoutCreator", fields: [createdBy], references: [id])
+  members PayoutMember[]
+
+  @@map("payouts")
+}
+
+model PayoutMember {
+  id        String   @id @default(cuid())
+  amount    Float
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign Keys
+  payoutId String
+  userId   String
+
+  // Relations
+  payout Payout @relation(fields: [payoutId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([payoutId, userId])
+  @@map("payout_members")
+}
+
+model Payin {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  amount      Float
+  payinDate   DateTime    @default(now())
+  status      PayinStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Foreign Keys
+  projectId String
+  createdBy String
+  
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creator User    @relation("PayinCreator", fields: [createdBy], references: [id])
+  
+  @@map("payins")
+}
+
+enum PayoutStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum PayinStatus {
+  PENDING
+  RECEIVED
+  CANCELLED
 }

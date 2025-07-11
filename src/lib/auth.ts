@@ -32,12 +32,15 @@ export function verifyToken(token: string): JWTPayload | null {
 
 export function getTokenFromRequest(request: NextRequest): string | null {
   const authHeader = request.headers.get('authorization')
+  
   if (authHeader && authHeader.startsWith('Bearer ')) {
     return authHeader.substring(7)
   }
 
-  // Also check for token in cookies
-  return request.cookies.get('auth-token')?.value || null
+  // Also check for token in cookies (fallback)
+  return request.cookies.get('auth-token')?.value || 
+         request.cookies.get('auth_token')?.value || 
+         null
 }
 
 export function getUserFromRequest(request: NextRequest): JWTPayload | null {
