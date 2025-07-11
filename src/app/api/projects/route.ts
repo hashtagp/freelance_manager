@@ -4,9 +4,13 @@ import prisma from '@/lib/db';
 export async function GET() {
     try {
         const projects = await prisma.project.findMany();
-        return NextResponse.json(projects);
+        return NextResponse.json(projects, { status: 200 }); // Explicitly set 200 for clarity (optional, 200 is default)
     } catch (error) {
-        return NextResponse.error();
+        console.error('Error fetching projects:', error); // Log the actual error for debugging
+        return NextResponse.json(
+            { error: 'Failed to retrieve projects' },
+            { status: 500 } // <--- Send a proper 500 status code
+        );
     }
 }
 
