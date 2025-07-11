@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePathname } from 'next/navigation';
+import "@/styles/navigation.css";
 
 const Navigation = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
