@@ -10,7 +10,7 @@ import ProgressChart from './charts/ProgressChart';
 import LoadingSpinner from './ui/LoadingSpinner';
 import Link from 'next/link';
 
-const Dashboard: React.FC = () => {
+const DashboardNew: React.FC = () => {
     const { projects, loading: projectsLoading, error: projectsError } = useProjects();
     const { teams, loading: teamsLoading, error: teamsError } = useTeams();
 
@@ -154,4 +154,4 @@ const Dashboard: React.FC = () => {
     );
 };
 
-export default Dashboard;
+export default DashboardNew;
