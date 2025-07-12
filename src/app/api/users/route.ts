@@ -1,23 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
 // GET /api/users - Get all users
 export async function GET() {
     try {
-        const users = await prisma.user.findMany({
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                avatar: true,
-                createdAt: true
-            },
-            orderBy: {
-                name: 'asc'
-            }
-        });
+        const supabase = await createClient();
+        const { data: users, error } = await supabase
+            .from('User')
+            .select('id, name, email, avatar, createdAt')
+            .order('name', { ascending: true });
 
-        return NextResponse.json(users);
+        if (error) {
+            console.error('Error fetching users:', error);
+            return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+        }
+
+        return NextResponse.json(users || []);
     } catch (error) {
         console.error('Error fetching users:', error);
         return NextResponse.json(

@@ -1,23 +1,27 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET() {
     try {
-        const teams = await prisma.team.findMany({
-            include: {
-                members: {
-                    include: {
-                        user: true,
-                    },
-                },
-                projects: {
-                    include: {
-                        project: true,
-                    },
-                },
-            },
-        });
-        return NextResponse.json(teams);
+        const supabase = await createClient();
+        const { data: teams, error } = await supabase
+            .from('Team')
+            .select(`
+                *,
+                TeamMember(
+                    User(*)
+                ),
+                ProjectTeam(
+                    Project(*)
+                )
+            `);
+
+        if (error) {
+            console.error('Database error:', error);
+            return NextResponse.json({ error: 'Failed to fetch teams' }, { status: 500 });
+        }
+
+        return NextResponse.json(teams || []);
     } catch (error) {
         console.error('Error fetching teams:', error);
         return NextResponse.json({ error: 'Failed to fetch teams' }, { status: 500 });
@@ -33,24 +37,28 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Team name is required' }, { status: 400 });
         }
 
-        const newTeam = await prisma.team.create({
-            data: {
+        const supabase = await createClient();
+        const { data: newTeam, error: createError } = await supabase
+            .from('Team')
+            .insert({
                 name,
                 description,
-            },
-            include: {
-                members: {
-                    include: {
-                        user: true,
-                    },
-                },
-                projects: {
-                    include: {
-                        project: true,
-                    },
-                },
-            },
-        });
+            })
+            .select(`
+                *,
+                TeamMember(
+                    User(*)
+                ),
+                ProjectTeam(
+                    Project(*)
+                )
+            `)
+            .single();
+
+        if (createError || !newTeam) {
+            console.error('Team creation error:', createError);
+            return NextResponse.json({ error: 'Failed to create team' }, { status: 500 });
+        }
 
         return NextResponse.json(newTeam, { status: 201 });
     } catch (error) {

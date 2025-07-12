@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 import { getUserFromRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
@@ -13,21 +13,27 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // Get projects for the authenticated user
-        const projects = await prisma.project.findMany({
-            where: {
-                userId: user.userId
-            },
-            include: {
-                client: true,
-                teamMembers: {
-                    include: {
-                        user: true
-                    }
-                }
-            }
-        });
-        return NextResponse.json(projects, { status: 200 });
+        // Get projects for the authenticated user using Supabase
+        const supabase = await createClient();
+        const { data: projects, error } = await supabase
+            .from('Project')
+            .select(`
+                *,
+                Client(*),
+                ProjectTeamMember(
+                    User(*)
+                )
+            `)
+            .eq('userId', user.userId);
+        if (error) {
+            console.error('Database error:', error);
+            return NextResponse.json(
+                { error: 'Failed to fetch projects' },
+                { status: 500 }
+            );
+        }
+
+        return NextResponse.json(projects || [], { status: 200 });
     } catch (error) {
         console.error('Error fetching projects:', error);
         return NextResponse.json(
@@ -59,21 +65,32 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const newProject = await prisma.project.create({
-            data: {
+        // Create new project using Supabase
+        const supabase = await createClient();
+        const { data: newProject, error: createError } = await supabase
+            .from('Project')
+            .insert({
                 title: name,
                 description,
                 userId: user.userId,
-            },
-            include: {
-                client: true,
-                teamMembers: {
-                    include: {
-                        user: true
-                    }
-                }
-            }
-        });
+            })
+            .select(`
+                *,
+                Client(*),
+                ProjectTeamMember(
+                    User(*)
+                )
+            `)
+            .single();
+
+        if (createError || !newProject) {
+            console.error('Project creation error:', createError);
+            return NextResponse.json(
+                { error: 'Failed to create project' },
+                { status: 500 }
+            );
+        }
+
         return NextResponse.json(newProject, { status: 201 });
     } catch (error) {
         console.error('Error creating project:', error);

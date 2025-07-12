@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET(
   request: Request,
@@ -8,28 +8,27 @@ export async function GET(
   try {
     const { id } = await params;
     
-    const team = await prisma.team.findUnique({
-      where: { id },
-      include: {
-        members: {
-          include: {
-            user: true,
-          },
-        },
-        projects: {
-          include: {
-            project: {
-              include: {
-                user: true,
-                client: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    const supabase = await createClient();
+    
+    const { data: team, error } = await supabase
+      .from('Team')
+      .select(`
+        *,
+        TeamMember(
+          User(*)
+        ),
+        ProjectTeam(
+          Project(
+            *,
+            User(*),
+            Client(*)
+          )
+        )
+      `)
+      .eq('id', id)
+      .single();
 
-    if (!team) {
+    if (error || !team) {
       return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 

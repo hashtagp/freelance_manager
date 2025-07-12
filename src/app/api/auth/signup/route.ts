@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 import { hashPassword, generateToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -21,12 +21,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    });
+    // Check if user already exists using Supabase
+    const supabase = await createClient();
+    const { data: existingUser, error: checkError } = await supabase
+      .from('User')
+      .select('id')
+      .eq('email', email)
+      .single();
 
-    if (existingUser) {
+    if (existingUser && !checkError) {
       return NextResponse.json(
         { error: 'User with this email already exists' },
         { status: 409 }
@@ -36,14 +39,24 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user in database
-    const user = await prisma.user.create({
-      data: {
+    // Create user in database using Supabase
+    const { data: user, error: createError } = await supabase
+      .from('User')
+      .insert({
         name,
         email,
         password: hashedPassword,
-      }
-    });
+      })
+      .select()
+      .single();
+
+    if (createError || !user) {
+      console.error('User creation error:', createError);
+      return NextResponse.json(
+        { error: 'Failed to create user' },
+        { status: 500 }
+      );
+    }
 
     // Generate JWT token
     const token = generateToken({
