@@ -87,7 +87,7 @@ const ProjectCardEnhanced: React.FC<ProjectCardEnhancedProps> = ({ project }) =>
                 <div className="project-stat">
                     <div className="project-stat-label">Team Size</div>
                     <div className="project-stat-value">
-                        {project.teamMembers?.length || 0} members
+                        {project.teams?.length || 0} teams
                     </div>
                 </div>
             </div>
