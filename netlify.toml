@@ -3,11 +3,15 @@
   publish = ".next"
   functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "18.17.0"
+  NPM_FLAGS = "--legacy-peer-deps"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [context.production.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "18.17.0"
 
 [context.deploy-preview]
   command = "npm install --legacy-peer-deps && npm run build"
