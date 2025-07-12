@@ -356,12 +356,12 @@ const PayoutModal: React.FC<PayoutModalProps> = ({
                                             fontSize: '14px',
                                             fontWeight: '600'
                                         }}>
-                                            {member.user.name.charAt(0).toUpperCase()}
+                                            {member.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                         </div>
                                         
                                         <div style={{ flex: 1 }}>
                                             <div style={{ fontWeight: '500', color: '#374151' }}>
-                                                {member.user.name}
+                                                {member.user?.name || 'Unknown Member'}
                                             </div>
                                             <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                                                 Balance: {formatCurrency(member.balance)}

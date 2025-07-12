@@ -166,7 +166,7 @@ const ProjectTeamPricing: React.FC<ProjectTeamPricingProps> = ({ projectId }) =>
                                         fontWeight: '600',
                                         color: '#374151'
                                     }}>
-                                        {team.name}
+                                        {team?.name || 'Unknown Team'}
                                     </h4>
                                     <p style={{
                                         margin: '0.25rem 0 0 0',
@@ -209,11 +209,11 @@ const ProjectTeamPricing: React.FC<ProjectTeamPricingProps> = ({ projectId }) =>
                                                     fontSize: '14px',
                                                     fontWeight: '600'
                                                 }}>
-                                                    {member.user.name.charAt(0).toUpperCase()}
+                                                    {member.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                                 </div>
                                                 <div>
                                                     <div style={{ fontWeight: '500', color: '#374151' }}>
-                                                        {member.user.name}
+                                                        {member.user?.name || 'Unknown Member'}
                                                     </div>
                                                     {member.notes && (
                                                         <div style={{ 

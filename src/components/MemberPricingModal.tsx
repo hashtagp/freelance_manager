@@ -180,11 +180,11 @@ const MemberPricingModal: React.FC<MemberPricingModalProps> = ({
                                         fontSize: '14px',
                                         fontWeight: '600'
                                     }}>
-                                        {member.name.charAt(0).toUpperCase()}
+                                        {member.name?.charAt(0)?.toUpperCase() || 'U'}
                                     </div>
                                     <div>
                                         <div style={{ fontWeight: '600', color: '#1f2937' }}>
-                                            {member.name}
+                                            {member.name || 'Unknown Member'}
                                         </div>
                                         <div style={{ fontSize: '14px', color: '#6b7280' }}>
                                             {member.email}

@@ -13,10 +13,11 @@ export async function GET(
       .from('projects')
       .select(`
         *,
-        users(*),
-        clients(*),
-        project_team_members(
-          users(*)
+        user:users(*),
+        client:clients(*),
+        teamMembers:project_team_members(
+          *,
+          user:users(*)
         ),
         payments(*),
         deadlines(*)

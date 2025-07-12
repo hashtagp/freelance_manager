@@ -259,11 +259,11 @@ const ProjectPayouts: React.FC<ProjectPayoutsProps> = ({ projectId }) => {
                                         fontSize: '14px',
                                         fontWeight: '600'
                                     }}>
-                                        {member.user.name.charAt(0).toUpperCase()}
+                                        {member.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                     </div>
                                     <div>
                                         <div style={{ fontWeight: '500', color: '#374151' }}>
-                                            {member.user.name}
+                                            {member.user?.name || 'Unknown Member'}
                                         </div>
                                         <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
                                             {member.user.email}
@@ -413,7 +413,7 @@ const ProjectPayouts: React.FC<ProjectPayoutsProps> = ({ projectId }) => {
                                             borderRadius: '6px',
                                             fontSize: '0.875rem'
                                         }}>
-                                            <span style={{ color: '#374151' }}>{member.user.name}</span>
+                                            <span style={{ color: '#374151' }}>{member.user?.name || 'Unknown Member'}</span>
                                             <span style={{ fontWeight: '500', color: '#059669' }}>
                                                 {formatCurrency(member.amount)}
                                             </span>

@@ -13,8 +13,8 @@ export async function GET(
             .from('project_team_member_pricing')
             .select(`
                 *,
-                users(*),
-                teams(*)
+                user:users(*),
+                team:teams(*)
             `)
             .eq('projectId', projectId);
 
