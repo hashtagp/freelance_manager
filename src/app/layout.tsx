@@ -7,7 +7,7 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export const metadata = {
-  title: 'Freelance Project Manager',
+  title: 'Payteams',
   description: 'A modern project management solution for freelancers',
 };
 
