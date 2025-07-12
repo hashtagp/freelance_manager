@@ -21,7 +21,14 @@ export async function GET() {
             return NextResponse.json({ error: 'Failed to fetch teams' }, { status: 500 });
         }
 
-        return NextResponse.json(teams || []);
+        // Transform the data to normalize team_members as members for frontend compatibility
+        const transformedTeams = (teams || []).map(team => ({
+            ...team,
+            members: team.team_members || [],
+            projects: team.project_teams || []
+        }));
+
+        return NextResponse.json(transformedTeams);
     } catch (error) {
         console.error('Error fetching teams:', error);
         return NextResponse.json({ error: 'Failed to fetch teams' }, { status: 500 });

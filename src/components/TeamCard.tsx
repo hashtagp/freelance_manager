@@ -17,6 +17,10 @@ const TeamCard: React.FC<TeamCardProps> = ({ team }) => {
         });
     };
 
+    // Handle both API structure (team_members) and expected structure (members)
+    const members = team.team_members || team.members || [];
+    const projects = team.project_teams || team.projects || [];
+
     return (
         <div className="project-card-enhanced">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
@@ -24,7 +28,7 @@ const TeamCard: React.FC<TeamCardProps> = ({ team }) => {
                     {team.name}
                 </Link>
                 <span className="project-status-badge status-active">
-                    {team.members?.length || 0} members
+                    {members.length} members
                 </span>
             </div>
 
@@ -36,13 +40,13 @@ const TeamCard: React.FC<TeamCardProps> = ({ team }) => {
                 <div className="project-stat">
                     <div className="project-stat-label">Members</div>
                     <div className="project-stat-value">
-                        {team.members?.length || 0}
+                        {members.length}
                     </div>
                 </div>
                 <div className="project-stat">
                     <div className="project-stat-label">Projects</div>
                     <div className="project-stat-value">
-                        {team.projects?.length || 0}
+                        {projects.length}
                     </div>
                 </div>
             </div>

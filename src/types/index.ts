@@ -207,8 +207,11 @@ export interface Team {
   status: 'active' | 'inactive'
   createdAt: Date
   updatedAt: Date
-  members: TeamMember[]
-  projects: ProjectTeam[]
+  team_members?: TeamMember[]
+  project_teams?: ProjectTeam[]
+  // Keep the old properties for backward compatibility
+  members?: TeamMember[]
+  projects?: ProjectTeam[]
 }
 
 export interface TeamMember {

@@ -41,8 +41,10 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ projectId, onTeamsChange })
             const response = await fetch(`/api/projects/${projectId}/teams`);
             if (response.ok) {
                 const projectTeams = await response.json();
-                setAssignedTeams(projectTeams);
-                onTeamsChange(projectTeams);
+                // Extract team objects from the project_teams response
+                const teams = projectTeams.map((pt: any) => pt.team);
+                setAssignedTeams(teams);
+                onTeamsChange(teams);
             }
         } catch (error) {
             console.error('Failed to load project teams:', error);
@@ -241,7 +243,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ projectId, onTeamsChange })
                                             {team.name}
                                         </div>
                                         <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                                            {team.members?.length || 0} members
+                                            {(team.members || team.team_members)?.length || 0} members
                                         </div>
                                         <div style={{ fontSize: '0.75rem', color: '#059669', marginTop: '0.25rem' }}>
                                             {formatPricingSummary(team.id)}
@@ -321,7 +323,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ projectId, onTeamsChange })
                                         {team.name}
                                     </div>
                                     <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                                        {team.members?.length || 0} members
+                                        {(team.members || team.team_members)?.length || 0} members
                                     </div>
                                 </div>
                                 <button
@@ -379,7 +381,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ projectId, onTeamsChange })
                     }}
                     projectId={projectId}
                     teamId={selectedTeamForPricing.id}
-                    members={selectedTeamForPricing.members?.map(m => m.user) || []}
+                    members={(selectedTeamForPricing.members || selectedTeamForPricing.team_members)?.map((m: any) => m.user || m) || []}
                     existingPricing={getTeamPricing(selectedTeamForPricing.id)}
                     onSave={handleSavePricing}
                 />

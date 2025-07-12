@@ -32,7 +32,14 @@ export async function GET(
       return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
-    return NextResponse.json(team);
+    // Transform the data to normalize team_members as members for frontend compatibility
+    const transformedTeam = {
+      ...team,
+      members: team.team_members || [],
+      projects: team.project_teams || []
+    };
+
+    return NextResponse.json(transformedTeam);
   } catch (error) {
     console.error('Error fetching team:', error);
     return NextResponse.json(
