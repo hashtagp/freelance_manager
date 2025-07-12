@@ -241,11 +241,11 @@ const EditProjectPage = () => {
                                     onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
                                     onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                                 >
-                                    <option value="active">Active</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="on_hold">On Hold</option>
-                                    <option value="cancelled">Cancelled</option>
+                                    <option value="PLANNING">Planning</option>
+                                    <option value="IN_PROGRESS">In Progress</option>
+                                    <option value="REVIEW">Review</option>
+                                    <option value="COMPLETED">Completed</option>
+                                    <option value="CANCELLED">Cancelled</option>
                                 </select>
                             </div>
 

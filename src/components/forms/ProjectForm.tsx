@@ -15,7 +15,7 @@ interface ProjectFormProps {
 export interface ProjectFormData {
   name: string;
   description: string;
-  status: 'planning' | 'in-progress' | 'completed' | 'on-hold';
+  status: 'PLANNING' | 'IN_PROGRESS' | 'REVIEW' | 'COMPLETED' | 'CANCELLED';
   startDate: string;
   endDate: string;
   budget: number;
@@ -41,7 +41,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   const [formData, setFormData] = useState<ProjectFormData>({
     name: initialData?.name || '',
     description: initialData?.description || '',
-    status: initialData?.status || 'planning',
+    status: initialData?.status || 'PLANNING',
     startDate: initialData?.startDate || '',
     endDate: initialData?.endDate || '',
     budget: initialData?.budget || 0,
@@ -146,10 +146,11 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={(e) => handleChange('status', e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
           >
-            <option value="planning">Planning</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="on-hold">On Hold</option>
+            <option value="PLANNING">Planning</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="REVIEW">Review</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="CANCELLED">Cancelled</option>
           </select>
         </div>
 
