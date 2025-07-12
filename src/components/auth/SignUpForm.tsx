@@ -112,6 +112,8 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
             required
             placeholder="Enter your full name"
             disabled={isLoading}
+            variant="glass"
+            icon={<span className="text-lg">👤</span>}
           />
 
           <Input
@@ -123,6 +125,8 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
             required
             placeholder="Enter your email"
             disabled={isLoading}
+            variant="glass"
+            icon={<span className="text-lg">📧</span>}
           />
 
           <Input
@@ -134,14 +138,24 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
             required
             placeholder="Create a password (min. 6 characters)"
             disabled={isLoading}
+            variant="glass"
+            icon={<span className="text-lg">🔒</span>}
             helperText="Minimum 6 characters"
           />
           
           {formData.password && (
             <div className="password-strength">
-              <div className={`strength-bar ${passwordStrength >= 1 ? (passwordStrength === 1 ? 'weak' : passwordStrength === 2 ? 'medium' : 'strong') : ''}`}></div>
-              <div className={`strength-bar ${passwordStrength >= 2 ? (passwordStrength === 2 ? 'medium' : 'strong') : ''}`}></div>
-              <div className={`strength-bar ${passwordStrength >= 3 ? 'strong' : ''}`}></div>
+              <div className="strength-indicators">
+                <div className={`strength-bar ${passwordStrength >= 1 ? (passwordStrength === 1 ? 'weak' : passwordStrength === 2 ? 'medium' : 'strong') : ''}`}></div>
+                <div className={`strength-bar ${passwordStrength >= 2 ? (passwordStrength === 2 ? 'medium' : 'strong') : ''}`}></div>
+                <div className={`strength-bar ${passwordStrength >= 3 ? 'strong' : ''}`}></div>
+              </div>
+              <span className="strength-text">
+                {passwordStrength === 0 && 'Enter password'}
+                {passwordStrength === 1 && 'Weak'}
+                {passwordStrength === 2 && 'Medium'}
+                {passwordStrength === 3 && 'Strong'}
+              </span>
             </div>
           )}
 
@@ -154,6 +168,8 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
             required
             placeholder="Confirm your password"
             disabled={isLoading}
+            variant="glass"
+            icon={<span className="text-lg">🔐</span>}
             error={formData.confirmPassword && formData.password !== formData.confirmPassword ? 'Passwords do not match' : undefined}
           />
         </div>

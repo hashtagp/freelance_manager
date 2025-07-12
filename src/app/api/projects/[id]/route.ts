@@ -10,16 +10,16 @@ export async function GET(
     const supabase = await createClient();
     
     const { data: project, error } = await supabase
-      .from('Project')
+      .from('projects')
       .select(`
         *,
-        User(*),
-        Client(*),
-        ProjectTeamMember(
-          User(*)
+        users(*),
+        clients(*),
+        project_team_members(
+          users(*)
         ),
-        Payment(*),
-        Deadline(*)
+        payments(*),
+        deadlines(*)
       `)
       .eq('id', id)
       .single();
@@ -49,7 +49,7 @@ export async function PUT(
 
     const supabase = await createClient();
     const { data: updatedProject, error: updateError } = await supabase
-      .from('Project')
+      .from('projects')
       .update({
         title,
         description,
@@ -62,13 +62,13 @@ export async function PUT(
       .eq('id', id)
       .select(`
         *,
-        User(*),
-        Client(*),
-        ProjectTeamMember(
-          User(*)
+        users(*),
+        clients(*),
+        project_team_members(
+          users(*)
         ),
-        Payment(*),
-        Deadline(*)
+        payments(*),
+        deadlines(*)
       `)
       .single();
 
@@ -98,7 +98,7 @@ export async function DELETE(
     const { id } = await params;
     const supabase = await createClient();
     const { error: deleteError } = await supabase
-      .from('Project')
+      .from('projects')
       .delete()
       .eq('id', id);
 

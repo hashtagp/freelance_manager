@@ -120,7 +120,7 @@ const ProjectPage = () => {
           </div>
         )}
         
-        {project.teamMembers.length > 0 && (
+        {project.teamMembers && project.teamMembers.length > 0 && (
           <div className="card-modern">
             <h3 className="card-title">Team Members</h3>
             <div className="card-description">

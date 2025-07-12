@@ -159,3 +159,146 @@
   color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
 }
+
+/* Password Strength Indicator */
+.password-strength {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.strength-indicators {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.strength-bar {
+  height: 3px;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.strength-bar.weak {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+.strength-bar.medium {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
+
+.strength-bar.strong {
+  background: linear-gradient(90deg, #10b981, #34d399);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+.strength-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Enhanced Button Styling */
+.auth-form-submit {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #9333ea, #ec4899);
+  border: none;
+  border-radius: 0.75rem;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+}
+
+.auth-form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(147, 51, 234, 0.4);
+}
+
+.auth-form-submit:active {
+  transform: translateY(0);
+}
+
+.auth-form-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.auth-form-submit:hover::before {
+  left: 100%;
+}
+
+/* Switch Button Enhancement */
+.auth-form-switch-btn {
+  background: none;
+  border: none;
+  color: #ec4899;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.auth-form-switch-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ec4899, #f472b6);
+  transition: width 0.3s ease;
+}
+
+.auth-form-switch-btn:hover {
+  color: #f472b6;
+  transform: translateY(-1px);
+}
+
+.auth-form-switch-btn:hover::after {
+  width: 100%;
+}
+
+/* Form Field Animation */
+.auth-form-fields {
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading State */
+.auth-form-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-form-submit:disabled::before {
+  display: none;
+}

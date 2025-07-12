@@ -16,12 +16,12 @@ export async function GET(request: NextRequest) {
         // Get projects for the authenticated user using Supabase
         const supabase = await createClient();
         const { data: projects, error } = await supabase
-            .from('Project')
+            .from('projects')
             .select(`
                 *,
-                Client(*),
-                ProjectTeamMember(
-                    User(*)
+                clients(*),
+                project_team_members(
+                    users(*)
                 )
             `)
             .eq('userId', user.userId);
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
         // Create new project using Supabase
         const supabase = await createClient();
         const { data: newProject, error: createError } = await supabase
-            .from('Project')
+            .from('projects')
             .insert({
                 title: name,
                 description,
@@ -76,9 +76,9 @@ export async function POST(request: NextRequest) {
             })
             .select(`
                 *,
-                Client(*),
-                ProjectTeamMember(
-                    User(*)
+                clients(*),
+                project_team_members(
+                    users(*)
                 )
             `)
             .single();

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 import { hashPassword, generateToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -21,10 +21,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user already exists using Supabase
-    const supabase = await createClient();
+    // Check if user already exists using Supabase Admin Client
+    const supabase = createAdminClient();
     const { data: existingUser, error: checkError } = await supabase
-      .from('User')
+      .from('users')
       .select('id')
       .eq('email', email)
       .single();
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Create user in database using Supabase
     const { data: user, error: createError } = await supabase
-      .from('User')
+      .from('users')
       .insert({
         name,
         email,

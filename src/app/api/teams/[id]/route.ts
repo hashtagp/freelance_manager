@@ -11,17 +11,17 @@ export async function GET(
     const supabase = await createClient();
     
     const { data: team, error } = await supabase
-      .from('Team')
+      .from('teams')
       .select(`
         *,
-        TeamMember(
-          User(*)
+        team_members(
+          users(*)
         ),
-        ProjectTeam(
-          Project(
+        project_teams(
+          projects(
             *,
-            User(*),
-            Client(*)
+            users(*),
+            clients(*)
           )
         )
       `)

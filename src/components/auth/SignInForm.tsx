@@ -68,6 +68,8 @@ export function SignInForm({ onSwitchToSignUp }: SignInFormProps) {
             required
             placeholder="Enter your email"
             disabled={isLoading}
+            variant="glass"
+            icon={<span className="text-lg">📧</span>}
           />
 
           <Input
@@ -79,6 +81,8 @@ export function SignInForm({ onSwitchToSignUp }: SignInFormProps) {
             required
             placeholder="Enter your password"
             disabled={isLoading}
+            variant="glass"
+            icon={<span className="text-lg">🔒</span>}
           />
         </div>
 

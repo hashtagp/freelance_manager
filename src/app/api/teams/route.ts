@@ -5,14 +5,14 @@ export async function GET() {
     try {
         const supabase = await createClient();
         const { data: teams, error } = await supabase
-            .from('Team')
+            .from('teams')
             .select(`
                 *,
-                TeamMember(
-                    User(*)
+                team_members(
+                    users(*)
                 ),
-                ProjectTeam(
-                    Project(*)
+                project_teams(
+                    projects(*)
                 )
             `);
 
@@ -39,18 +39,18 @@ export async function POST(request: Request) {
 
         const supabase = await createClient();
         const { data: newTeam, error: createError } = await supabase
-            .from('Team')
+            .from('teams')
             .insert({
                 name,
                 description,
             })
             .select(`
                 *,
-                TeamMember(
-                    User(*)
+                team_members(
+                    users(*)
                 ),
-                ProjectTeam(
-                    Project(*)
+                project_teams(
+                    projects(*)
                 )
             `)
             .single();

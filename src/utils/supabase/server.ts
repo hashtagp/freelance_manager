@@ -2,14 +2,14 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Use service role for API routes
 
 export const createClient = async () => {
   const cookieStore = await cookies();
   
   return createServerClient(
     supabaseUrl!,
-    supabaseKey!,
+    supabaseServiceKey!, // Service role bypasses RLS
     {
       cookies: {
         getAll() {
