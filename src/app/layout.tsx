@@ -28,7 +28,7 @@ export default function RootLayout({
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.3)_1px,_transparent_0)] bg-[size:20px_20px] pointer-events-none" />
               
               {/* Content */}
-              <div className="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
+              <div className="relative z-10 container mx-auto py-8 max-w-7xl">
                 <ProtectedRoute>
                   {children}
                 </ProtectedRoute>
