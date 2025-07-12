@@ -34,7 +34,7 @@ const MemberPricingModal: React.FC<MemberPricingModalProps> = ({
                 return {
                     userId: member.id,
                     fixedRate: existing?.fixedRate || 0,
-                    currency: existing?.currency || 'USD',
+                    currency: existing?.currency || 'INR',
                     notes: existing?.notes || ''
                 };
             });
@@ -245,10 +245,10 @@ const MemberPricingModal: React.FC<MemberPricingModalProps> = ({
                                                 fontSize: '14px'
                                             }}
                                         >
-                                            <option value="USD">USD</option>
+                                            <option value="INR">INR</option>
+                                            <option value="INR">INR</option>
                                             <option value="EUR">EUR</option>
                                             <option value="GBP">GBP</option>
-                                            <option value="INR">INR</option>
                                         </select>
                                     </div>
                                 </div>

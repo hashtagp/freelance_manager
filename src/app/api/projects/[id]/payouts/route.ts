@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export async function GET(
     request: NextRequest,
@@ -7,27 +7,35 @@ export async function GET(
 ) {
     try {
         const { id: projectId } = await params;
+        const supabase = createAdminClient();
 
-        const payouts = await prisma.payout.findMany({
-            where: {
-                projectId
-            },
-            include: {
-                creator: true,
-                members: {
-                    include: {
-                        user: true
-                    }
-                }
-            },
-            orderBy: {
-                createdAt: 'desc'
-            }
-        });
+        const { data: payouts, error } = await supabase
+            .from('payouts')
+            .select(`
+                *,
+                creator:users!createdBy(*),
+                members:payout_members(
+                    *,
+                    user:users(*)
+                )
+            `)
+            .eq('projectId', projectId)
+            .order('createdAt', { ascending: false });
+
+        if (error) {
+            console.error('Supabase error:', error);
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to fetch project payouts' 
+                },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
             success: true,
-            data: payouts
+            data: payouts || []
         });
     } catch (error) {
         console.error('Failed to fetch project payouts:', error);
@@ -62,24 +70,23 @@ export async function POST(
         // Calculate total amount
         const totalAmount = members.reduce((sum: number, member: any) => sum + (member.amount || 0), 0);
 
-        // Get a user ID for createdBy - for now, get the first user from the project's team
+        // Get a user ID for createdBy - for now, get the first user from the project's teams
         // TODO: Replace this with actual authenticated user ID
-        const projectWithUsers = await prisma.project.findUnique({
-            where: { id: projectId },
-            include: {
-                teams: {
-                    include: {
-                        team: {
-                            include: {
-                                members: {
-                                    include: { user: true }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        const supabase = createAdminClient();
+        const { data: projectWithUsers, error: projectError } = await supabase
+            .from('projects')
+            .select(`
+                *,
+                teams:project_teams(
+                    team:teams(
+                        members:team_members(
+                            user:users(*)
+                        )
+                    )
+                )
+            `)
+            .eq('id', projectId)
+            .single();
 
         let actualCreatedBy = createdBy;
         
@@ -90,7 +97,12 @@ export async function POST(
                 actualCreatedBy = firstUser;
             } else {
                 // If no users in project teams, get any user from the database
-                const anyUser = await prisma.user.findFirst();
+                const { data: anyUser, error: userError } = await supabase
+                    .from('users')
+                    .select('id')
+                    .limit(1)
+                    .single();
+
                 if (anyUser) {
                     actualCreatedBy = anyUser.id;
                 } else {
@@ -102,33 +114,54 @@ export async function POST(
             }
         }
 
-        // Create payout with members
-        const newPayout = await prisma.payout.create({
-            data: {
+        // Create payout
+        const { data: newPayout, error: payoutError } = await supabase
+            .from('payouts')
+            .insert({
                 title,
                 description: description || null,
                 totalAmount,
                 status: status || 'PENDING',
-                payoutDate: payoutDate ? new Date(payoutDate) : new Date(),
+                payoutDate: payoutDate ? new Date(payoutDate).toISOString() : new Date().toISOString(),
                 projectId,
-                createdBy: actualCreatedBy,
-                members: {
-                    create: members.map((member: any) => ({
-                        userId: member.userId,
-                        amount: member.amount,
-                        notes: member.notes || null
-                    }))
-                }
-            },
-            include: {
-                creator: true,
-                members: {
-                    include: {
-                        user: true
-                    }
-                }
+                createdBy: actualCreatedBy
+            })
+            .select(`
+                *,
+                creator:users!createdBy(*),
+                project:projects(*)
+            `)
+            .single();
+
+        if (payoutError || !newPayout) {
+            console.error('Create payout error:', payoutError);
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to create payout' 
+                },
+                { status: 500 }
+            );
+        }
+
+        // Create payout members
+        if (members && members.length > 0) {
+            const payoutMembers = members.map((member: any) => ({
+                payoutId: newPayout.id,
+                userId: member.userId,
+                amount: member.amount,
+                notes: member.notes || null
+            }));
+
+            const { error: membersError } = await supabase
+                .from('payout_members')
+                .insert(payoutMembers);
+
+            if (membersError) {
+                console.error('Create payout members error:', membersError);
+                // Note: Payout was created but members failed - consider rollback
             }
-        });
+        }
 
         return NextResponse.json({
             success: true,

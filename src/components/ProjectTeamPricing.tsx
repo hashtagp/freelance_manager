@@ -50,7 +50,7 @@ const ProjectTeamPricing: React.FC<ProjectTeamPricingProps> = ({ projectId }) =>
         return pricing.reduce((total, item) => total + item.fixedRate, 0);
     };
 
-    const formatCurrency = (amount: number, currency: string = 'USD') => {
+    const formatCurrency = (amount: number, currency: string = 'INR') => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: currency,
@@ -143,7 +143,7 @@ const ProjectTeamPricing: React.FC<ProjectTeamPricingProps> = ({ projectId }) =>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {Object.values(groupedPricing).map(({ team, members }) => {
                     const teamTotal = members.reduce((sum, member) => sum + member.fixedRate, 0);
-                    const currency = members[0]?.currency || 'USD';
+                    const currency = members[0]?.currency || 'INR';
 
                     return (
                         <div key={team.id} style={{

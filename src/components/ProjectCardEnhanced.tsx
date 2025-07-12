@@ -31,7 +31,7 @@ const ProjectCardEnhanced: React.FC<ProjectCardEnhancedProps> = ({ project }) =>
         if (!amount) return 'Not set';
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'INR',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
         }).format(amount);

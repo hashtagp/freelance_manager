@@ -120,7 +120,7 @@ const PayoutModal: React.FC<PayoutModalProps> = ({
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'INR',
         }).format(amount);
     };
 
@@ -369,7 +369,7 @@ const PayoutModal: React.FC<PayoutModalProps> = ({
                                         </div>
                                         
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <span style={{ fontSize: '0.875rem', color: '#374151' }}>$</span>
+                                            <span style={{ fontSize: '0.875rem', color: '#374151' }}>₹</span>
                                             <input
                                                 type="text"
                                                 value={memberAmounts[member.user.id] || ''}

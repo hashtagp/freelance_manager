@@ -74,7 +74,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, className }
                     <div className="text-right">
                         {project.budget && (
                             <div className="text-lg font-bold text-green-600">
-                                ${project.budget.toLocaleString()}
+                                ₹{project.budget.toLocaleString()}
                             </div>
                         )}
                         {project.deadline && (

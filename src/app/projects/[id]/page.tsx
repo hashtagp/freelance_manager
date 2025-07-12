@@ -78,7 +78,7 @@ const ProjectPage = () => {
         </div>
         <div className="stat-card">
           <div className="stat-label">Budget</div>
-          <div className="stat-number" style={{ fontSize: '1.5rem' }}>${project.budget || 'Not set'}</div>
+          <div className="stat-number" style={{ fontSize: '1.5rem' }}>₹{project.budget || 'Not set'}</div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Start Date</div>
@@ -126,7 +126,7 @@ const ProjectPage = () => {
             <div className="card-description">
               {project.teamMembers.map(member => (
                 <div key={member.id} className="card-description" style={{ marginBottom: '8px' }}>
-                  <strong>{member.role}</strong> - ${member.hourlyRate || 0}/hr
+                  <strong>{member.role}</strong> - ₹{member.hourlyRate || 0}/hr
                 </div>
               ))}
             </div>

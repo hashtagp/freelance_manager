@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export async function DELETE(
   request: Request,
@@ -7,16 +7,25 @@ export async function DELETE(
 ) {
   try {
     const { id: projectId, teamId } = await params;
+    const supabase = createAdminClient();
     
     // Delete the project-team relationship
-    const deletedCount = await prisma.projectTeam.deleteMany({
-      where: {
-        projectId,
-        teamId,
-      },
-    });
+    const { data: deletedRows, error } = await supabase
+      .from('project_teams')
+      .delete()
+      .eq('projectId', projectId)
+      .eq('teamId', teamId)
+      .select();
 
-    if (deletedCount.count === 0) {
+    if (error) {
+      console.error('Delete project team error:', error);
+      return NextResponse.json(
+        { error: 'Failed to remove team from project' },
+        { status: 500 }
+      );
+    }
+
+    if (!deletedRows || deletedRows.length === 0) {
       return NextResponse.json(
         { error: 'Team assignment not found' },
         { status: 404 }

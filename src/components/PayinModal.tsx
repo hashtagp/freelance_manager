@@ -77,7 +77,7 @@ const PayinModal: React.FC<PayinModalProps> = ({
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'INR',
         }).format(amount);
     };
 
@@ -270,7 +270,7 @@ const PayinModal: React.FC<PayinModalProps> = ({
                                 color: '#6b7280',
                                 fontSize: '0.875rem'
                             }}>
-                                $
+                                ₹
                             </span>
                             <input
                                 type="number"

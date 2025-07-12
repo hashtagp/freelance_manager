@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 /**
  * GET /api/payins/[id]
@@ -11,28 +11,28 @@ export async function GET(
 ) {
     try {
         const { id: payinId } = await params;
+        const supabase = createAdminClient();
 
-        const payin = await prisma.payin.findUnique({
-            where: { id: payinId },
-            include: {
-                creator: {
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true
-                    }
-                },
-                project: {
-                    select: {
-                        id: true,
-                        title: true,
-                        budget: true
-                    }
-                }
-            }
-        });
+        const { data: payin, error } = await supabase
+            .from('payins')
+            .select(`
+                *,
+                creator:users!createdBy(
+                    id,
+                    name,
+                    email
+                ),
+                project:projects!projectId(
+                    id,
+                    title,
+                    budget
+                )
+            `)
+            .eq('id', payinId)
+            .single();
 
-        if (!payin) {
+        if (error || !payin) {
+            console.error('Supabase error:', error);
             return NextResponse.json(
                 { 
                     success: false, 
@@ -80,25 +80,43 @@ export async function PUT(
             );
         }
 
-        const updatedPayin = await prisma.payin.update({
-            where: { id: payinId },
-            data: {
-                title,
-                description: description || null,
-                amount: parseFloat(amount),
-                status: status || 'PENDING',
-                payinDate: payinDate ? new Date(payinDate) : undefined,
-            },
-            include: {
-                creator: {
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true
-                    }
-                }
-            }
-        });
+        const supabase = createAdminClient();
+
+        const updateData: any = {
+            title,
+            description: description || null,
+            amount: parseFloat(amount),
+            status: status || 'PENDING',
+        };
+
+        if (payinDate) {
+            updateData.payinDate = new Date(payinDate).toISOString();
+        }
+
+        const { data: updatedPayin, error } = await supabase
+            .from('payins')
+            .update(updateData)
+            .eq('id', payinId)
+            .select(`
+                *,
+                creator:users!createdBy(
+                    id,
+                    name,
+                    email
+                )
+            `)
+            .single();
+
+        if (error) {
+            console.error('Supabase update error:', error);
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to update payin' 
+                },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
             success: true,
@@ -127,10 +145,23 @@ export async function DELETE(
 ) {
     try {
         const { id: payinId } = await params;
+        const supabase = createAdminClient();
 
-        await prisma.payin.delete({
-            where: { id: payinId }
-        });
+        const { error } = await supabase
+            .from('payins')
+            .delete()
+            .eq('id', payinId);
+
+        if (error) {
+            console.error('Supabase delete error:', error);
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to delete payin' 
+                },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
             success: true,

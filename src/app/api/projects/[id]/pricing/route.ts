@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export async function GET(
     request: NextRequest,
@@ -7,20 +7,31 @@ export async function GET(
 ) {
     try {
         const { id: projectId } = await params;
+        const supabase = createAdminClient();
 
-        const pricing = await prisma.projectTeamMemberPricing.findMany({
-            where: {
-                projectId
-            },
-            include: {
-                user: true,
-                team: true
-            }
-        });
+        const { data: pricing, error } = await supabase
+            .from('project_team_member_pricing')
+            .select(`
+                *,
+                users(*),
+                teams(*)
+            `)
+            .eq('projectId', projectId);
+
+        if (error) {
+            console.error('Supabase error:', error);
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to fetch project pricing' 
+                },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
             success: true,
-            data: pricing
+            data: pricing || []
         });
     } catch (error) {
         console.error('Failed to fetch project pricing:', error);
@@ -53,32 +64,46 @@ export async function POST(
         }
 
         // Delete existing pricing for this project and team
-        await prisma.projectTeamMemberPricing.deleteMany({
-            where: {
-                projectId,
-                teamId
-            }
-        });
+        const supabase = createAdminClient();
+        const { error: deleteError } = await supabase
+            .from('project_team_member_pricing')
+            .delete()
+            .eq('projectId', projectId)
+            .eq('teamId', teamId);
+
+        if (deleteError) {
+            console.error('Delete error:', deleteError);
+        }
 
         // Create new pricing records
-        const newPricing = await Promise.all(
-            pricingData.map(async (data: any) => {
-                return prisma.projectTeamMemberPricing.create({
-                    data: {
-                        projectId,
-                        teamId,
-                        userId: data.userId,
-                        fixedRate: data.fixedRate,
-                        currency: data.currency || 'USD',
-                        notes: data.notes || null
-                    },
-                    include: {
-                        user: true,
-                        team: true
-                    }
-                });
-            })
-        );
+        const pricingRecords = pricingData.map((data: any) => ({
+            projectId,
+            teamId,
+            userId: data.userId,
+            fixedRate: data.fixedRate,
+            currency: data.currency || 'INR',
+            notes: data.notes || null
+        }));
+
+        const { data: newPricing, error: insertError } = await supabase
+            .from('project_team_member_pricing')
+            .insert(pricingRecords)
+            .select(`
+                *,
+                users(*),
+                teams(*)
+            `);
+
+        if (insertError) {
+            console.error('Insert error:', insertError);
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to save project pricing' 
+                },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
             success: true,
@@ -114,21 +139,33 @@ export async function PUT(
             );
         }
 
-        const updatedPricing = await prisma.projectTeamMemberPricing.update({
-            where: {
-                id: pricingId,
-                projectId // Ensure the pricing belongs to this project
-            },
-            data: {
+        const supabase = createAdminClient();
+        const { data: updatedPricing, error } = await supabase
+            .from('project_team_member_pricing')
+            .update({
                 fixedRate,
-                currency: currency || 'USD',
+                currency: currency || 'INR',
                 notes: notes || null
-            },
-            include: {
-                user: true,
-                team: true
-            }
-        });
+            })
+            .eq('id', pricingId)
+            .eq('projectId', projectId)
+            .select(`
+                *,
+                users(*),
+                teams(*)
+            `)
+            .single();
+
+        if (error) {
+            console.error('Update error:', error);
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to update pricing' 
+                },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
             success: true,
@@ -157,31 +194,63 @@ export async function DELETE(
         const teamId = searchParams.get('teamId');
         const userId = searchParams.get('userId');
 
+        const supabase = createAdminClient();
+
         if (pricingId) {
             // Delete specific pricing record
-            await prisma.projectTeamMemberPricing.delete({
-                where: {
-                    id: pricingId,
-                    projectId
-                }
-            });
+            const { error } = await supabase
+                .from('project_team_member_pricing')
+                .delete()
+                .eq('id', pricingId)
+                .eq('projectId', projectId);
+
+            if (error) {
+                console.error('Delete error:', error);
+                return NextResponse.json(
+                    { 
+                        success: false, 
+                        error: 'Failed to delete pricing' 
+                    },
+                    { status: 500 }
+                );
+            }
         } else if (teamId && userId) {
             // Delete pricing for specific user in team
-            await prisma.projectTeamMemberPricing.deleteMany({
-                where: {
-                    projectId,
-                    teamId,
-                    userId
-                }
-            });
+            const { error } = await supabase
+                .from('project_team_member_pricing')
+                .delete()
+                .eq('projectId', projectId)
+                .eq('teamId', teamId)
+                .eq('userId', userId);
+
+            if (error) {
+                console.error('Delete user pricing error:', error);
+                return NextResponse.json(
+                    { 
+                        success: false, 
+                        error: 'Failed to delete user pricing' 
+                    },
+                    { status: 500 }
+                );
+            }
         } else if (teamId) {
             // Delete all pricing for team
-            await prisma.projectTeamMemberPricing.deleteMany({
-                where: {
-                    projectId,
-                    teamId
-                }
-            });
+            const { error } = await supabase
+                .from('project_team_member_pricing')
+                .delete()
+                .eq('projectId', projectId)
+                .eq('teamId', teamId);
+
+            if (error) {
+                console.error('Delete team pricing error:', error);
+                return NextResponse.json(
+                    { 
+                        success: false, 
+                        error: 'Failed to delete team pricing' 
+                    },
+                    { status: 500 }
+                );
+            }
         } else {
             return NextResponse.json(
                 { 

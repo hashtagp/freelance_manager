@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 // GET /api/teams/[id]/members - Get team members
 export async function GET(
@@ -8,26 +8,26 @@ export async function GET(
 ) {
     try {
         const { id: teamId } = await params;
+        const supabase = createAdminClient();
 
-        const team = await prisma.team.findUnique({
-            where: { id: teamId },
-            include: {
-                members: {
-                    include: {
-                        user: {
-                            select: {
-                                id: true,
-                                name: true,
-                                email: true,
-                                avatar: true
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        const { data: team, error } = await supabase
+            .from('teams')
+            .select(`
+                *,
+                members:team_members(
+                    *,
+                    user:users(
+                        id,
+                        name,
+                        email,
+                        avatar
+                    )
+                )
+            `)
+            .eq('id', teamId)
+            .single();
 
-        if (!team) {
+        if (error || !team) {
             return NextResponse.json(
                 { error: 'Team not found' },
                 { status: 404 }
@@ -61,14 +61,15 @@ export async function POST(
         }
 
         // Check if user is already a member of this team
-        const existingMember = await prisma.teamMember.findFirst({
-            where: {
-                teamId,
-                userId
-            }
-        });
+        const supabase = createAdminClient();
+        const { data: existingMember, error: checkError } = await supabase
+            .from('team_members')
+            .select('id')
+            .eq('teamId', teamId)
+            .eq('userId', userId)
+            .single();
 
-        if (existingMember) {
+        if (existingMember && !checkError) {
             return NextResponse.json(
                 { error: 'User is already a member of this team' },
                 { status: 400 }
@@ -76,24 +77,32 @@ export async function POST(
         }
 
         // Add member to team
-        const teamMember = await prisma.teamMember.create({
-            data: {
+        const { data: teamMember, error: createError } = await supabase
+            .from('team_members')
+            .insert({
                 teamId,
                 userId,
                 role,
-                joinedAt: new Date()
-            },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true,
-                        avatar: true
-                    }
-                }
-            }
-        });
+                joinedAt: new Date().toISOString()
+            })
+            .select(`
+                *,
+                user:users(
+                    id,
+                    name,
+                    email,
+                    avatar
+                )
+            `)
+            .single();
+
+        if (createError || !teamMember) {
+            console.error('Create team member error:', createError);
+            return NextResponse.json(
+                { error: 'Failed to add member to team' },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json(teamMember, { status: 201 });
     } catch (error) {
@@ -123,12 +132,20 @@ export async function DELETE(
         }
 
         // Remove member from team
-        await prisma.teamMember.deleteMany({
-            where: {
-                teamId,
-                userId
-            }
-        });
+        const supabase = createAdminClient();
+        const { error: deleteError } = await supabase
+            .from('team_members')
+            .delete()
+            .eq('teamId', teamId)
+            .eq('userId', userId);
+
+        if (deleteError) {
+            console.error('Delete team member error:', deleteError);
+            return NextResponse.json(
+                { error: 'Failed to remove member from team' },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({ success: true });
     } catch (error) {

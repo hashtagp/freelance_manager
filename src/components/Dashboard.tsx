@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
                 />
                 <StatsCard
                     title="Total Revenue"
-                    value={`$${totalRevenue.toLocaleString()}`}
+                    value={`₹${totalRevenue.toLocaleString()}`}
                     icon="💰"
                     change={totalRevenue > 0 ? "Revenue goal" : ""}
                     changeType="positive"
@@ -224,7 +224,7 @@ const Dashboard: React.FC = () => {
                                         <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                                                 <span>💰</span>
-                                                <span>${project.budget?.toLocaleString() || 'Not set'}</span>
+                                                <span>₹{project.budget?.toLocaleString() || 'Not set'}</span>
                                             </div>
                                             {project.deadline && (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>

@@ -124,7 +124,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ projectId, onTeamsChange })
         if (pricing.length === 0) return 'No pricing set';
         
         const total = pricing.reduce((sum, p) => sum + p.fixedRate, 0);
-        const currency = pricing[0]?.currency || 'USD';
+        const currency = pricing[0]?.currency || 'INR';
         return `${pricing.length} members: ${currency} ${total.toFixed(2)}`;
     };
 
