@@ -29,9 +29,7 @@ export default function RootLayout({
               
               {/* Content */}
               <div className="relative z-10 container mx-auto py-8 max-w-7xl">
-                <ProtectedRoute>
-                  {children}
-                </ProtectedRoute>
+                {children}
               </div>
             </main>
             <Footer />

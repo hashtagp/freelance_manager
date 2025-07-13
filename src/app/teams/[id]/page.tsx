@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Team } from '@/types';
 import TeamMemberSelector from '@/components/TeamMemberSelector';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import '@/styles/projects.css';
 
 const TeamDetailPage = () => {
@@ -60,36 +61,34 @@ const TeamDetailPage = () => {
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="projects-container">
-                <div className="projects-loading">
-                    <div className="projects-loading-spinner"></div>
-                    <p className="projects-loading-text">Loading team...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (error || !team) {
-        return (
-            <div className="projects-container">
-                <div className="projects-empty-state">
-                    <div className="projects-empty-icon">❌</div>
-                    <h2 className="projects-empty-title">Error Loading Team</h2>
-                    <p className="projects-empty-description">{error || 'Team not found'}</p>
-                    <Link href="/teams" className="projects-new-btn">
-                        <span>←</span>
-                        Back to Teams
-                    </Link>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="projects-container">
-            <div className="projects-header">
+        <ProtectedRoute>
+            {isLoading && (
+                <div className="projects-container">
+                    <div className="projects-loading">
+                        <div className="projects-loading-spinner"></div>
+                        <p className="projects-loading-text">Loading team...</p>
+                    </div>
+                </div>
+            )}
+
+            {(error || !team) && !isLoading && (
+                <div className="projects-container">
+                    <div className="projects-empty-state">
+                        <div className="projects-empty-icon">❌</div>
+                        <h2 className="projects-empty-title">Error Loading Team</h2>
+                        <p className="projects-empty-description">{error || 'Team not found'}</p>
+                        <Link href="/teams" className="projects-new-btn">
+                            <span>←</span>
+                            Back to Teams
+                        </Link>
+                    </div>
+                </div>
+            )}
+
+            {!isLoading && !error && team && (
+                <div className="projects-container">
+                    <div className="projects-header">
                 <div className="projects-header-content">
                     <h1 className="projects-title">{team.name}</h1>
                     <p className="projects-subtitle">
@@ -284,8 +283,10 @@ const TeamDetailPage = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                </div>
+                </div>
+            )}
+        </ProtectedRoute>
     );
 };
 

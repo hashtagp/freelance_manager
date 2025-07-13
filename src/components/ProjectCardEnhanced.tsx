@@ -11,8 +11,11 @@ const ProjectCardEnhanced: React.FC<ProjectCardEnhancedProps> = ({ project }) =>
         switch (status.toLowerCase()) {
             case 'completed': return 'status-completed';
             case 'active': return 'status-active';
+            case 'in_progress': return 'status-active';
             case 'planning': return 'status-planning';
+            case 'review': return 'status-review';
             case 'on_hold': return 'status-on_hold';
+            case 'cancelled': return 'status-cancelled';
             default: return 'status-planning';
         }
     };
@@ -20,9 +23,12 @@ const ProjectCardEnhanced: React.FC<ProjectCardEnhancedProps> = ({ project }) =>
     const getProgressValue = (status: string) => {
         switch (status.toLowerCase()) {
             case 'completed': return 100;
+            case 'in_progress': return 65;
             case 'active': return 65;
+            case 'review': return 85;
             case 'planning': return 20;
             case 'on_hold': return 45;
+            case 'cancelled': return 0;
             default: return 0;
         }
     };
@@ -67,7 +73,12 @@ const ProjectCardEnhanced: React.FC<ProjectCardEnhancedProps> = ({ project }) =>
             <div className="project-progress">
                 <div className="project-progress-label">
                     <span>Progress</span>
-                    <span>{progressValue}%</span>
+                    <span>
+                        {project.status.toLowerCase() === 'cancelled' 
+                            ? 'Cancelled' 
+                            : `${progressValue}%`
+                        }
+                    </span>
                 </div>
                 <div className="project-progress-bar">
                     <div 

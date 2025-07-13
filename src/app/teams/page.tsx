@@ -4,40 +4,39 @@ import React from 'react';
 import Link from 'next/link';
 import { useTeams } from '../../hooks/useTeams';
 import TeamCard from '../../components/TeamCard';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import '../../styles/projects.css';
 
 const TeamsPage = () => {
   const { teams, loading, error } = useTeams();
 
-  if (loading) {
-    return (
-      <div className="projects-container">
-        <div className="projects-loading">
-          <div className="projects-loading-spinner"></div>
-          <p className="projects-loading-text">Loading teams...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="projects-container">
-        <div className="projects-empty-state">
-          <div className="projects-empty-icon">❌</div>
-          <h2 className="projects-empty-title">Error Loading Teams</h2>
-          <p className="projects-empty-description">{error}</p>
-          <button className="projects-new-btn" onClick={() => window.location.reload()}>
-            <span>🔄</span>
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="projects-container">
+    <ProtectedRoute>
+      {loading && (
+        <div className="projects-container">
+          <div className="projects-loading">
+            <div className="projects-loading-spinner"></div>
+            <p className="projects-loading-text">Loading teams...</p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="projects-container">
+          <div className="projects-empty-state">
+            <div className="projects-empty-icon">❌</div>
+            <h2 className="projects-empty-title">Error Loading Teams</h2>
+            <p className="projects-empty-description">{error}</p>
+            <button className="projects-new-btn" onClick={() => window.location.reload()}>
+              <span>🔄</span>
+              Try Again
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="projects-container">
       {/* Header */}
       <div className="projects-header">
         <h1 className="projects-title">Teams</h1>
@@ -71,7 +70,9 @@ const TeamsPage = () => {
           </Link>
         </div>
       )}
-    </div>
+        </div>
+      )}
+    </ProtectedRoute>
   );
 };
 

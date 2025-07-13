@@ -8,6 +8,7 @@ import { fetchProject } from '../../../lib/api';
 import ProjectTeamPricing from '../../../components/ProjectTeamPricing';
 import ProjectPayouts from '../../../components/ProjectPayouts';
 import ProjectPayins from '../../../components/ProjectPayins';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const ProjectPage = () => {
   const params = useParams();
@@ -26,35 +27,33 @@ const ProjectPage = () => {
     }
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="page-container">
-        <div className="empty-state">
-          <div className="spinner"></div>
-          <p>Loading project...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!project) {
-    return (
-      <div className="page-container">
-        <div className="empty-state">
-          <div className="empty-state-icon">❌</div>
-          <h2 className="empty-state-title">Project Not Found</h2>
-          <p className="empty-state-description">The project you're looking for doesn't exist or has been deleted.</p>
-          <Link href="/projects" className="btn btn-primary">
-            <span>📋</span>
-            Back to Projects
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="page-container">
+    <ProtectedRoute>
+      {loading && (
+        <div className="page-container">
+          <div className="empty-state">
+            <div className="spinner"></div>
+            <p>Loading project...</p>
+          </div>
+        </div>
+      )}
+
+      {!loading && !project && (
+        <div className="page-container">
+          <div className="empty-state">
+            <div className="empty-state-icon">❌</div>
+            <h2 className="empty-state-title">Project Not Found</h2>
+            <p className="empty-state-description">The project you're looking for doesn't exist or has been deleted.</p>
+            <Link href="/projects" className="btn btn-primary">
+              <span>📋</span>
+              Back to Projects
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {!loading && project && (
+        <div className="page-container">
       <div className="page-header">
         <h1 className="page-title">{project.title}</h1>
         <p className="page-subtitle">{project.description}</p>
@@ -133,7 +132,9 @@ const ProjectPage = () => {
           </div>
         )}
       </div>
-    </div>
+        </div>
+      )}
+    </ProtectedRoute>
   );
 };
 

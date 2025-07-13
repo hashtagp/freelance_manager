@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { TeamForm } from '../../../components/forms/TeamForm';
 import { TeamFormData } from '@/types';
 import { useTeams } from '@/hooks/useTeams';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 const NewTeamPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,25 +43,25 @@ const NewTeamPage = () => {
     router.push('/teams');
   };
 
-  if (success) {
-    return (
-      <div className="page-container">
-        <div className="empty-state">
-          <div className="empty-state-icon" style={{ background: 'var(--gradient-success)' }}>
-            ✅
-          </div>
-          <h2 className="empty-state-title">Team Created Successfully!</h2>
-          <p className="empty-state-description">
-            Your team has been created and you're being redirected to the teams page.
-          </p>
-          <div className="spinner" style={{ margin: '20px auto' }}></div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="page-container">
+    <ProtectedRoute>
+      {success && (
+        <div className="page-container">
+          <div className="empty-state">
+            <div className="empty-state-icon" style={{ background: 'var(--gradient-success)' }}>
+              ✅
+            </div>
+            <h2 className="empty-state-title">Team Created Successfully!</h2>
+            <p className="empty-state-description">
+              Your team has been created and you're being redirected to the teams page.
+            </p>
+            <div className="spinner" style={{ margin: '20px auto' }}></div>
+          </div>
+        </div>
+      )}
+
+      {!success && (
+        <div className="page-container">
       {/* Breadcrumb Navigation */}
       <div style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '0.9rem' }}>
@@ -174,7 +175,9 @@ const NewTeamPage = () => {
           </div>
         </div>
       </div>
-    </div>
+        </div>
+      )}
+    </ProtectedRoute>
   );
 };
 

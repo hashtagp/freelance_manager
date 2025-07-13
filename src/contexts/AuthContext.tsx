@@ -102,10 +102,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signOut = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-    setUser(null);
+  const signOut =  async() => {
+    await localStorage.removeItem('auth_token');
+    await localStorage.removeItem('user_data');
+    await  setUser(null);
+    window.location.href = "https://payteams.netlify.app";
   };
 
   const value = {

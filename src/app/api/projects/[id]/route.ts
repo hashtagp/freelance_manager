@@ -19,6 +19,10 @@ export async function GET(
           *,
           user:users(*)
         ),
+        teams:project_teams(
+          *,
+          team:teams(*)
+        ),
         payments(*),
         deadlines(*)
       `)
@@ -29,7 +33,16 @@ export async function GET(
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
-    return NextResponse.json(project);
+    // Transform the data to match the expected Project interface
+    const transformedProject = {
+      ...project,
+      // Ensure teams data is properly mapped
+      teams: project.teams || [],
+      // Ensure teamMembers data is properly mapped
+      teamMembers: project.teamMembers || []
+    };
+
+    return NextResponse.json(transformedProject);
   } catch (error) {
     console.error('Error fetching project:', error);
     return NextResponse.json(

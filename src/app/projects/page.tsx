@@ -8,40 +8,39 @@ import ProjectCardEnhanced from '../../components/ProjectCardEnhanced';
 import Button from '../../components/ui/Button';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import Card from '../../components/ui/Card';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import '../../styles/projects.css';
 
 const ProjectsPage = () => {
   const { projects, loading, error } = useProjects();
 
-  if (loading) {
-    return (
-      <div className="projects-container">
-        <div className="projects-loading">
-          <div className="projects-loading-spinner"></div>
-          <p className="projects-loading-text">Loading projects...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="projects-container">
-        <div className="projects-empty-state">
-          <div className="projects-empty-icon">❌</div>
-          <h2 className="projects-empty-title">Error Loading Projects</h2>
-          <p className="projects-empty-description">{error}</p>
-          <button className="projects-new-btn" onClick={() => window.location.reload()}>
-            <span>🔄</span>
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="projects-container">
+    <ProtectedRoute>
+      {loading && (
+        <div className="projects-container">
+          <div className="projects-loading">
+            <div className="projects-loading-spinner"></div>
+            <p className="projects-loading-text">Loading projects...</p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="projects-container">
+          <div className="projects-empty-state">
+            <div className="projects-empty-icon">❌</div>
+            <h2 className="projects-empty-title">Error Loading Projects</h2>
+            <p className="projects-empty-description">{error}</p>
+            <button className="projects-new-btn" onClick={() => window.location.reload()}>
+              <span>🔄</span>
+              Try Again
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="projects-container">
       {/* Header */}
       <div className="projects-header">
         <h1 className="projects-title">Projects</h1>
@@ -75,7 +74,9 @@ const ProjectsPage = () => {
           </Link>
         </div>
       )}
-    </div>
+        </div>
+      )}
+    </ProtectedRoute>
   );
 };
 

@@ -22,6 +22,9 @@ export async function GET(request: NextRequest) {
                 clients(*),
                 project_team_members(
                     users(*)
+                ),
+                project_teams(
+                    teams(*)
                 )
             `)
             .eq('userId', user.userId);
@@ -33,7 +36,20 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        return NextResponse.json(projects || [], { status: 200 });
+        // Transform the data to match the expected Project interface
+        const transformedProjects = projects?.map(project => ({
+            ...project,
+            // Map project_team_members to teamMembers
+            teamMembers: project.project_team_members || [],
+            // Map project_teams to teams 
+            teams: project.project_teams || [],
+            // Ensure user data is available
+            user: project.user || { name: 'Unknown User' },
+            // Ensure client data is available if it exists
+            client: project.clients || null
+        })) || [];
+
+        return NextResponse.json(transformedProjects, { status: 200 });
     } catch (error) {
         console.error('Error fetching projects:', error);
         return NextResponse.json(

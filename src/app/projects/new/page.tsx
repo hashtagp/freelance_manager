@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createProject } from '@/lib/api';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import '../../../styles/projects.css';
 
 const NewProjectPage = () => {
@@ -33,7 +34,8 @@ const NewProjectPage = () => {
     };
 
     return (
-        <div className="projects-container">
+        <ProtectedRoute>
+            <div className="projects-container">
             <div className="projects-header">
                 <h1 className="projects-title">Create New Project</h1>
                 <p className="projects-subtitle">Start a new freelance project and track your progress</p>
@@ -156,7 +158,8 @@ const NewProjectPage = () => {
                     </form>
                 </div>
             </div>
-        </div>
+            </div>
+        </ProtectedRoute>
     );
 };
 
